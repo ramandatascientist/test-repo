@@ -1,24 +1,15 @@
-# Increment the SemVer tag
-# For posterity, here are the action libraries that we reviewed. The "monorepo" problem is the need to manage multiple simultaneous SemVer tags like "{service}/major.minor.patch"
-#   X https://github.com/Benbentwo/increment-semver: doesn't support any kind of prefix to the tag; won't work for monorepo.
-#   X https://github.com/K-Phoen/semver-release-action: includes "tag_format" parameter, but requires a label! :(
-#   X https://github.com/actions-ecosystem/action-bump-semver: doesn't expressly support prefix, but might be able to use action-regex-match to support monorepo. See the practical example they provide.
-#   X https://github.com/zwaldowski/semver-release-action: includes "prefix" parameter, has good examples, includes advanced features like a dry-run.  UPDATE: prefix doesn't work as required.
-#   WINNER https://github.com/darioblanco/bump-semver: looks like it's straightforward. Let's try it out.
-
-name: All - Bump the Semver tag on PR close
-
-on:
+name: Presentation - Bump the Semver tag on PR close
 on:
   push:
     branches:
+      - 'main'
       - 'release/**'
     paths:
       - .github/workflows/all-pr-semver-tag-bumper.yml # this file
       - collector/**
       - refinery/**
       - datastore/**
-
+      
 jobs:
   calculate-version:
     name: Calculate Version
@@ -29,19 +20,18 @@ jobs:
       fail-fast: false
       matrix:
         service: [datastore, collector, refinery]
-    outputs:
-      tag: ${{ steps.version.outputs.tag }
 
     env:
       SERVICE_NAME: ${{ matrix.service }}
+        
     outputs:
-      tag: ${{ steps.update-tag.outputs.tag }}
+      tag: ${{ steps.version.outputs.tag }}
       
     steps:
     - uses: actions/checkout@v2
-    with:
-       fetch-depth: 0 
-          
+      with:
+        fetch-depth: 0
+        
     - uses: dorny/paths-filter@v2
       id: pathfilter
       with:
@@ -49,13 +39,13 @@ jobs:
           collector: 'collector/**'
           datastore: 'datastore/**'
           refinery: 'refinery/**'
-            
+          
     - name: Update Tag
       id: update-tag
       if: (steps.pathfilter.outputs.datastore == 'true' && matrix.service == 'datastore')
         || (steps.pathfilter.outputs.collector == 'true' && matrix.service == 'collector')
         || (steps.pathfilter.outputs.refinery == 'true' && matrix.service == 'refinery')
-          
+        
     - name: Determine Version
       id: version
       env:
@@ -95,4 +85,3 @@ jobs:
               ref: "refs/tags/${{ env.TAG }}",
               sha: context.sha
             })
-
