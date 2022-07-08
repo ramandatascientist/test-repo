@@ -40,14 +40,17 @@ jobs:
           datastore: 'datastore/**'
           refinery: 'refinery/**'
           
-    - name: Update Tag
-      id: update-tag
-      if: (steps.pathfilter.outputs.datastore == 'true' && matrix.service == 'datastore')
-        || (steps.pathfilter.outputs.collector == 'true' && matrix.service == 'collector')
-        || (steps.pathfilter.outputs.refinery == 'true' && matrix.service == 'refinery')
+#     - name: Update Tag
+#       id: update-tag
+#       if: (steps.pathfilter.outputs.datastore == 'true' && matrix.service == 'datastore')
+#         || (steps.pathfilter.outputs.collector == 'true' && matrix.service == 'collector')
+#         || (steps.pathfilter.outputs.refinery == 'true' && matrix.service == 'refinery')
         
     - name: Determine Version
       id: version
+      if: (steps.pathfilter.outputs.datastore == 'true' && matrix.service == 'datastore')
+        || (steps.pathfilter.outputs.collector == 'true' && matrix.service == 'collector')
+        || (steps.pathfilter.outputs.refinery == 'true' && matrix.service == 'refinery
       env:
         GIT_BRANCH: ${{ github.ref_name }}
         GIT_TAG_PREFIX: "${{ env.SERVICE_NAME }}-v"
