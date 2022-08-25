@@ -1,4 +1,4 @@
-name: CAR - All Deployer
+name: CAR - All Deployer with Namespace
 on:
   workflow_dispatch:
     inputs:
