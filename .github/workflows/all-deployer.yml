@@ -1,10 +1,10 @@
-name: Presentation - All Deployer
+name: CAR - All Deployer
 on:
   workflow_dispatch:
     inputs:
       deploy:
         type: choice
-        description: Select the service that you like to deploy (eg: collector, datastore, refinery)
+        description: 'Select the service that you like to deploy (eg: collector, datastore, refinery)'
         options:
         - collector
         - datastore
