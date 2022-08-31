@@ -12,7 +12,7 @@ on:
       namespace:
         description: 'Select the namespace (eg: namespace_A, namespace_B)'
       tags:
-        description: 'Enter the tag that you like to deploy (eg: refinery/1.10.0)'
+        description: 'Enter the tag that you like to deploy (eg: refinery-v1.16.0)'
       choice:
         type: choice
         description: Select the environment where you like to deploy
