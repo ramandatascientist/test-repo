@@ -10,7 +10,12 @@ on:
         - datastore
         - refinery
       namespace:
+        type: choice
         description: 'Select the namespace (eg: namespace_A, namespace_B)'
+        options:
+        - namespace_A
+        - namespace_B
+        - namespace_C
       tags:
         description: 'Enter the tag that you like to deploy (eg: refinery-v1.16.0)'
       choice:
