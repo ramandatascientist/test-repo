@@ -2,7 +2,7 @@ name: CAR - All Deployer
 on:
   workflow_dispatch:
     inputs:
-      deploy:
+      service:
         type: choice
         description: 'Select the service that you like to deploy (eg: collector, datastore, refinery)'
         options:
@@ -11,7 +11,7 @@ on:
         - refinery
       tags:
         description: 'Enter the tag that you like to deploy (eg: refinery-v1.16.0)'
-      choice:
+      environment:
         type: choice
         description: Select the environment where you like to deploy
         options:
@@ -51,28 +51,37 @@ jobs:
         git pull origin main
         git fetch
         
-    - name: Tag Deploy (test condition)
-      if: ${{ github.event.inputs.choice == 'test' }}
-      shell: bash
-      run:  curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_TEST_CANADA_DEPLOY_SECRET }}" https://analytics-test.ca.symend.com/webhooks/projects/symend/deploy/ref/presentation-v${{ github.event.inputs.tags }}
-
-    - name: Tag Deploy (stage condition) # deploy same code to both regions (same for prod). we can also make it seperate by create seperate choices (stage CA, stage US)
-      if: ${{ github.event.inputs.choice == 'stage' }} 
-      shell: bash
+    - name: All in one job
       run: |
-        curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_STAGE_CANADA_DEPLOY_SECRET }}" https://analytics-staging.ca.symend.com/webhooks/projects/symend/deploy/ref/presentation-v${{ github.event.inputs.tags }}
-        curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_STAGE_US_DEPLOY_SECRET }}" https://analytics-staging.us.symend.com/webhooks/projects/symend/deploy/ref/presentation-v${{ github.event.inputs.tags }}
+        git checkout ${{ github.event.inputs.environment }/${{ github.event.inputs.service }
+        git reset --hard ${{ github.event.inputs.tags }
+        git push --force origin ${{ github.event.inputs.environment }/${{ github.event.inputs.service }
+        
+#     - name: Tag Deploy (test condition)
+#       if: ${{ github.event.inputs.choice == 'test' }}
+# #       shell: bash
+# #       run:  curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_TEST_CANADA_DEPLOY_SECRET }}" https://analytics-test.ca.symend.com/webhooks/projects/symend/deploy/ref/presentation-v${{ github.event.inputs.tags }}
+#       run: |
+#         git checkout test/${{ github.event.inputs.deploy }
+#         git reset --hard 
+        
+#     - name: Tag Deploy (stage condition) # deploy same code to both regions (same for prod). we can also make it seperate by create seperate choices (stage CA, stage US)
+#       if: ${{ github.event.inputs.choice == 'stage' }} 
+#       shell: bash
+#       run: |
+#         curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_STAGE_CANADA_DEPLOY_SECRET }}" https://analytics-staging.ca.symend.com/webhooks/projects/symend/deploy/ref/presentation-v${{ github.event.inputs.tags }}
+#         curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_STAGE_US_DEPLOY_SECRET }}" https://analytics-staging.us.symend.com/webhooks/projects/symend/deploy/ref/presentation-v${{ github.event.inputs.tags }}
 
-    - name: Tag Deploy (production condition)
-      if: ${{ github.event.inputs.choice  == 'production' }}
-      shell: bash
-      run: |
-        curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_PROD_CANADA_DEPLOY_SECRET }}" https://analytics.ca.symend.com/webhooks/projects/symend/deploy/ref/presentation-v${{ github.event.inputs.tags }}
-        curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_PROD_US_DEPLOY_SECRET }}" https://analytics.us.symend.com/webhooks/projects/symend/deploy/ref/presentation-v${{ github.event.inputs.tags }}
+#     - name: Tag Deploy (production condition)
+#       if: ${{ github.event.inputs.choice  == 'production' }}
+#       shell: bash
+#       run: |
+#         curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_PROD_CANADA_DEPLOY_SECRET }}" https://analytics.ca.symend.com/webhooks/projects/symend/deploy/ref/presentation-v${{ github.event.inputs.tags }}
+#         curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_PROD_US_DEPLOY_SECRET }}" https://analytics.us.symend.com/webhooks/projects/symend/deploy/ref/presentation-v${{ github.event.inputs.tags }}
 
-  deploy-content:
-    if: ${{ inputs.deploy != 'code' }}
-    uses: ./.github/workflows/presentation-content-deployer.yml
-    with:
-      target: ${{ inputs.choice }}
-    secrets: inherit
+#   deploy-content:
+#     if: ${{ inputs.deploy != 'code' }}
+#     uses: ./.github/workflows/presentation-content-deployer.yml
+#     with:
+#       target: ${{ inputs.choice }}
+#     secrets: inherit
