@@ -28,12 +28,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    
-    - name: pull and fetch
-      run: |
-        git pull origin main
-        git fetch
-        
+          
     - name: validate tag
       run: git show-ref --verify refs/tags/${{ github.event.inputs.tags }}
        
