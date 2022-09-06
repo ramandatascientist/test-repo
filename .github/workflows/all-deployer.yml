@@ -45,7 +45,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-        token: ${{ secrets.github_pat }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         
     - name: pull and fetch
       run: |
@@ -57,6 +57,19 @@ jobs:
         git checkout ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         git reset --hard ${{ github.event.inputs.tags }}
         git push --force origin ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+        
+        
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - run: |
+#           date > generated.txt
+#           git config user.name github-actions
+#           git config user.email github-actions@github.com
+#           git add .
+#           git commit -m "generated"
+#           git push
         
 #     - name: Tag Deploy (test condition)
 #       if: ${{ github.event.inputs.choice == 'test' }}
