@@ -35,7 +35,7 @@ jobs:
         git fetch
         
     - name: validate tag
-      run: git show-ref --verify refs/tags/presentation-v${{ github.event.inputs.tags }}
+      run: git show-ref --verify refs/tags/${{ github.event.inputs.tags }}
        
   deploy-tag:
     runs-on: ubuntu-latest
