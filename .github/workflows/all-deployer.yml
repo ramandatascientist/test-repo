@@ -53,9 +53,9 @@ jobs:
         
     - name: All in one job
       run: |
-        git checkout ${{ github.event.inputs.environment }/${{ github.event.inputs.service }
-        git reset --hard ${{ github.event.inputs.tags }
-        git push --force origin ${{ github.event.inputs.environment }/${{ github.event.inputs.service }
+        git checkout ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+        git reset --hard ${{ github.event.inputs.tags }}
+        git push --force origin ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         
 #     - name: Tag Deploy (test condition)
 #       if: ${{ github.event.inputs.choice == 'test' }}
