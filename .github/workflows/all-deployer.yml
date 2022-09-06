@@ -47,7 +47,7 @@ jobs:
         git pull origin main
         git fetch
         
-    - name: All in one job
+    - name: Deploy # clean out branch and deploy tag
       env:
         token: ${{ secrets.TEST_SECRET }}
       run: |
