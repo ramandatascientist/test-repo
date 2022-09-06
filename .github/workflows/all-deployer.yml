@@ -15,8 +15,8 @@ on:
         type: choice
         description: Select the environment where you like to deploy
         options:
+        - dev
         - test
-        - stage
         - production
 
 
