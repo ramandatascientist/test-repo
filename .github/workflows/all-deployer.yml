@@ -53,6 +53,8 @@ jobs:
         git fetch
         
     - name: All in one job
+      env:
+        token: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git checkout ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         git reset --hard ${{ github.event.inputs.tags }}
