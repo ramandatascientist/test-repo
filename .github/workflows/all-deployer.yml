@@ -51,9 +51,7 @@ jobs:
       env:
         token: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        git checkout ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
-        git reset --hard ${{ github.event.inputs.tags }}
-        git push --force origin ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+        git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
         
         
 #   build:
