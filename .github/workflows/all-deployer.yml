@@ -40,7 +40,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-        #token: ${{ secrets.TEST_SECRET }}
+        token: ${{ secrets.TEST_SECRET }}
         
     - name: pull and fetch
       run: |
@@ -48,8 +48,8 @@ jobs:
         git fetch
         
     - name: Deploy # clean out branch and deploy tag
-      env:
-        token: ${{ secrets.TEST_SECRET }}
+#       env:
+#         token: ${{ secrets.TEST_SECRET }}
       run: |
         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
         
