@@ -51,3 +51,10 @@ jobs:
       run: |
         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
         
+  deploy-adf:
+    if: ${{ github.event.inputs.service == 'collector' }}
+    uses: ./.github/workflows/presentation-content-deployer.yml
+    with:
+      environment: ${{ github.event.inputs.environment }}
+      target: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+        
