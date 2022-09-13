@@ -56,5 +56,5 @@ jobs:
     uses: ./.github/workflows/collector-adf-deployer_copy.yml
     with:
       environment: ${{ github.event.inputs.environment }}
-      branch: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+      branch-name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         
