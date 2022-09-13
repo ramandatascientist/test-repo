@@ -50,22 +50,29 @@ jobs:
     - name: Deploy # clean out branch and deploy tag
       run: |
         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
-   
-  deploy-adf:
-    runs-on: ubuntu-latest
-    needs: [ deploy-tag ]
-
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-        
+ 
     - name: adf-deploy
       if: ${{ github.event.inputs.service == 'collector' }}
       uses: ./.github/workflows/collector-adf-deployer_copy.yml
       with:
         environment: ${{ github.event.inputs.environment }}
         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+ 
+#   deploy-adf:
+#     runs-on: ubuntu-latest
+#     needs: [ deploy-tag ]
+
+#     steps:
+#     - uses: actions/checkout@v2
+#       with:
+#         fetch-depth: 0
+        
+#     - name: adf-deploy
+#       if: ${{ github.event.inputs.service == 'collector' }}
+#       uses: ./.github/workflows/collector-adf-deployer_copy.yml
+#       with:
+#         environment: ${{ github.event.inputs.environment }}
+#         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
   
 #   adf-deploy:
 #       needs: [ deploy-tag ]
