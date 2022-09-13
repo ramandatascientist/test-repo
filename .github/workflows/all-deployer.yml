@@ -58,9 +58,9 @@ jobs:
 #         environment: ${{ github.event.inputs.environment }}
 #         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
 
-- uses: actions/checkout@v1
-- name: My first step
-uses: ./.github/actions/my-action
+# - uses: actions/checkout@v1
+# - name: My first step
+# uses: ./.github/actions/my-action
 
 
 #   deploy-adf:
