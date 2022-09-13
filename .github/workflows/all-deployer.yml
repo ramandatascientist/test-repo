@@ -83,18 +83,18 @@ jobs:
       runs-on: ubuntu-latest
       needs: [ deploy-tag ]
 
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-        token: ${{ secrets.TEST_SECRET }}
-        
-    - name: adf-deploy
-      if: ${{ github.event.inputs.service == 'collector' }}
-      uses: ./.github/workflows/collector-adf-deployer_copy.yml
-      with:
-        environment: ${{ github.event.inputs.environment }}
-        branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+      steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.TEST_SECRET }}
+
+      - name: adf-deploy
+        if: ${{ github.event.inputs.service == 'collector' }}
+        uses: ./.github/workflows/collector-adf-deployer_copy.yml
+        with:
+          environment: ${{ github.event.inputs.environment }}
+          branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
       
 #     steps:
 #     - uses: actions/checkout@v2
