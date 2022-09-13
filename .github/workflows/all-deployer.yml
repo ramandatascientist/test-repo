@@ -50,11 +50,19 @@ jobs:
     - name: Deploy # clean out branch and deploy tag
       run: |
         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
-        
-    - name: adf-deploy
+   
+  adf-deploy:
+      needs: [ deploy-tag ]
       if: ${{ github.event.inputs.service == 'collector' }}
       uses: ./.github/workflows/collector-adf-deployer_copy.yml
       with:
         environment: ${{ github.event.inputs.environment }}
         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+      
+#     - name: adf-deploy
+#       if: ${{ github.event.inputs.service == 'collector' }}
+#       uses: ./.github/workflows/collector-adf-deployer_copy.yml
+#       with:
+#         environment: ${{ github.event.inputs.environment }}
+#         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         
