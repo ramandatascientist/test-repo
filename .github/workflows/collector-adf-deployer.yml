@@ -6,9 +6,6 @@ on:
       - 'dev/collector'
       - 'test/collector'
       - 'production/collector'
-    paths:
-      - '.github/workflows/collector-adf-deployer.yml' # this file
-      - 'collector/build/**'
 
 env: # Common environment variables regardless of environment and region
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }} 
