@@ -6,7 +6,7 @@ on:
       environment:
         required: true
         type: string
-      region:
+      branch:
         required: true
         type: string
     
