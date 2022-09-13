@@ -1,4 +1,4 @@
-name: Collector - ADF - Deploy to all regions
+name: Collector - ADF - Copy
 on:
   workflow_dispatch:
   workflow_call:
