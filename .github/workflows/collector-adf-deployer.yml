@@ -3,12 +3,12 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      username:
+      environment:
         required: true
         type: string
-    secrets:
-      envPAT:
+      region:
         required: true
+        type: string
     
 #   push:
 #     branches:
