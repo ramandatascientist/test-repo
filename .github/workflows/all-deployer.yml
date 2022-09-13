@@ -47,14 +47,16 @@ jobs:
         git pull origin main
         git fetch
         
-    - name: Deploy # clean out branch and deploy tag
-#       env:
-#         token: ${{ secrets.TEST_SECRET }}
+    - name: cleanup
       run: |
-        
         git branch -d ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         git push origin --delete ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         git checkout -b ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         git push –set-upstream origin ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+        
+    - name: Deploy # clean out branch and deploy tag
+#       env:
+#         token: ${{ secrets.TEST_SECRET }}
+      run: |
         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
         
