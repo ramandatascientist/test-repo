@@ -49,7 +49,6 @@ jobs:
         
     - name: cleanup
       run: |
-        git branch -d ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         git push origin --delete ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         git checkout -b ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         git push –set-upstream origin ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
