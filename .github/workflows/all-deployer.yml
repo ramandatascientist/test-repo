@@ -53,7 +53,7 @@ jobs:
         
   deploy-adf:
     if: ${{ github.event.inputs.service == 'collector' }}
-    uses: ./.github/workflows/presentation-content-deployer.yml
+    uses: ./.github/workflows/collector-adf-deployer_copy.yml
     with:
       environment: ${{ github.event.inputs.environment }}
       target: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
