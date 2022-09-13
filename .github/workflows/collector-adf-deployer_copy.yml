@@ -24,6 +24,7 @@ env: # Common environment variables regardless of environment and region
   COLLECTOR_SQL_DATABASES_EXTRACT_PARAMETER: "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().ServerName};Initial Catalog=@{linkedService().DatabaseName}"
   # This directory is where the arm template is located
   BUILD_DIR: ${{ github.workspace }}/collector/build/
+  branch_name: dev/collector
 
 jobs:
   deploy-adf:
@@ -191,9 +192,9 @@ jobs:
 
     # Stop ADF triggers
     - name: Azure PowerShell script Stop ADF Triggers
-      if: (github.ref == 'refs/heads/dev/collector' && matrix.environment == 'dev')
-         || (github.ref == 'refs/heads/test/collector' && matrix.environment == 'test')
-         || (github.ref == 'refs/heads/production/collector' && matrix.environment == 'prod')
+      if: (branch_name == 'dev/collector' && matrix.environment == 'dev')
+         || (branch_name == 'test/collector' && matrix.environment == 'test')
+         || (branch_name == '/production/collector' && matrix.environment == 'prod')
       run: |
         Install-Module -Name Az.DataFactory -Force
         ./collector/build/PrePostDeploymentScript.ps1  -armTemplate "${{ env.BUILD_DIR }}${{ env.SOURCE_ADF_NAME }}/ARMTemplateForFactory.json" -ResourceGroupName "${{ env.RESOURCE_GROUP_NAME }}" -DataFactoryName "${{ env.TARGET_ADF_NAME }}" -predeployment $true -deleteDeployment $false
