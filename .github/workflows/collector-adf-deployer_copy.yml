@@ -6,7 +6,7 @@ on:
       environment:
         required: true
         type: string
-      branch-name:
+      branch_name:
         required: true
         type: string
     
