@@ -1,11 +1,20 @@
 name: Collector - ADF - Deploy to all regions
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'dev/collector'
-      - 'test/collector'
-      - 'production/collector'
+  workflow_call:
+    inputs:
+      username:
+        required: true
+        type: string
+    secrets:
+      envPAT:
+        required: true
+    
+#   push:
+#     branches:
+#       - 'dev/collector'
+#       - 'test/collector'
+#       - 'production/collector'
 
 env: # Common environment variables regardless of environment and region
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }} 
