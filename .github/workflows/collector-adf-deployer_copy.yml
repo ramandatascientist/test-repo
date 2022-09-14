@@ -11,10 +11,10 @@ on:
 #         type: string
     
   push:
-#     branches:
-#       - 'dev/collector'
-#       - 'test/collector'
-#       - 'production/collector'
+    branches:
+      - 'dev/collector'
+      - 'test/collector'
+      - 'production/collector'
     paths:
       - '.github/workflows/collector-adf-deployer.yml' # this file
       - 'collector/**'
