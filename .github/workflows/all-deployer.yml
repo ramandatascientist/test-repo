@@ -47,9 +47,20 @@ jobs:
         git pull origin main
         git fetch
         
+    - name: Refinery Deploy
+      if: ${{ github.event.inputs.service == 'refinery' }}
+      run: git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+
+
+    - name: Collection Deploy
+      if: ${{ github.event.inputs.service == 'collector' }}
+      run: |
+        git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+
     - name: Deploy # clean out branch and deploy tag
       run: |
         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+        
  
     - name: adf-deploy
       if: ${{ github.event.inputs.service == 'collector' }}
