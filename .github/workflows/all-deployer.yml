@@ -38,6 +38,7 @@ jobs:
 
 #curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_TEST_CANADA_DEPLOY_SECRET }}" https://analytics-test.ca.symend.com/webhooks/projects/symend/deploy/ref/${{ env.TAG_SHA }}
 # echo "TAG_SHA=$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})" >> $GITHUB_ENV
+# # $(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<"${output}")
        
   deploy-tag:
     runs-on: ubuntu-latest
