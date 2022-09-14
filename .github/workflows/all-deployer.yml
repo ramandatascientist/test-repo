@@ -31,6 +31,12 @@ jobs:
           
     - name: validate tag
       run: git show-ref --verify refs/tags/${{ github.event.inputs.tags }}
+      
+    - name: remove whitespaces
+      shell: bash
+      run:  echo "clean_tag=${${{ github.event.inputs.tags }}//[[:blank:]]/}" >> $GITHUB_ENV
+
+#curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_TEST_CANADA_DEPLOY_SECRET }}" https://analytics-test.ca.symend.com/webhooks/projects/symend/deploy/ref/${{ env.TAG_SHA }}
        
   deploy-tag:
     runs-on: ubuntu-latest
@@ -47,15 +53,19 @@ jobs:
         git pull origin main
         git fetch
         
-    - name: Refinery Deploy
+    - name: Refinery Deploy test
       if: ${{ github.event.inputs.service == 'refinery' }}
-      run: git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+      run: git push origin ${{ env.clean_tag }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+        
+#     - name: Refinery Deploy
+#       if: ${{ github.event.inputs.service == 'refinery' }}
+#       run: git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
 
 
-    - name: Collector Deploy
-      if: ${{ github.event.inputs.service == 'collector' }}
-      run: |
-        git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+#     - name: Collector Deploy
+#       if: ${{ github.event.inputs.service == 'collector' }}
+#       run: |
+#         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
 
 # git push origin collector-v1.11.0:dev/refinery --force
 # git checkout ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
