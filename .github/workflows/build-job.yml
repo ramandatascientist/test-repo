@@ -1,4 +1,4 @@
-name: Collector - ADF - Copy
+name: Build Job
 on:
 #   workflow_dispatch:
 #   workflow_call:
