@@ -34,9 +34,10 @@ jobs:
       
     - name: remove whitespaces
       shell: bash
-      run:  echo "TAG_SHA=$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})" >> $GITHUB_ENV
+      run:  echo ::set-env name=TAG_NAME::echo ::set-env name=TAG_NAME::$(cat projectFile | grep -Po '(?<=Version>).*(?=</Version>)'
 
 #curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_TEST_CANADA_DEPLOY_SECRET }}" https://analytics-test.ca.symend.com/webhooks/projects/symend/deploy/ref/${{ env.TAG_SHA }}
+# echo "TAG_SHA=$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})" >> $GITHUB_ENV
        
   deploy-tag:
     runs-on: ubuntu-latest
@@ -55,7 +56,7 @@ jobs:
         
     - name: Refinery Deploy test
       if: ${{ github.event.inputs.service == 'refinery' }}
-      run: git push origin ${{ env.TAG_SHA }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+      run: git push origin ${{ env.TAG_NAME }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
         
 #     - name: Refinery Deploy
 #       if: ${{ github.event.inputs.service == 'refinery' }}
