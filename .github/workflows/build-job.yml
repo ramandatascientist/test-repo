@@ -1,5 +1,9 @@
 name: Build Job
 on:
+  workflow_run:
+    workflows: [build-job]
+    types: [completed]
+    
 #   workflow_dispatch:
 #   workflow_call:
 #     inputs:
@@ -10,14 +14,14 @@ on:
 #         required: true
 #         type: string
     
-  push:
-    branches:
-      - 'dev/collector'
-      - 'test/collector'
-      - 'production/collector'
-    paths:
-      - '.github/workflows/collector-adf-deployer.yml' # this file
-      - 'collector/**'
+#   push:
+#     branches:
+#       - 'dev/collector'
+#       - 'test/collector'
+#       - 'production/collector'
+#     paths:
+#       - '.github/workflows/collector-adf-deployer.yml' # this file
+#       - 'collector/**'
 
 env: # Common environment variables regardless of environment and region
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }} 
