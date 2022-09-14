@@ -1,20 +1,20 @@
 name: Collector - ADF - Copy
 on:
-  workflow_dispatch:
-  workflow_call:
-    inputs:
-      environment:
-        required: true
-        type: string
-      branch_name:
-        required: true
-        type: string
+#   workflow_dispatch:
+#   workflow_call:
+#     inputs:
+#       environment:
+#         required: true
+#         type: string
+#       branch_name:
+#         required: true
+#         type: string
     
-#   push:
-#     branches:
-#       - 'dev/collector'
-#       - 'test/collector'
-#       - 'production/collector'
+  push:
+    branches:
+      - 'dev/collector'
+      - 'test/collector'
+      - 'production/collector'
 
 env: # Common environment variables regardless of environment and region
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }} 
