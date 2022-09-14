@@ -57,7 +57,7 @@ jobs:
       run: |
         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
 
-
+# git push origin collector-v1.11.0:dev/refinery --force
 # git checkout ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
 # git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 # git config --global user.name "${{ github.actor }}"
