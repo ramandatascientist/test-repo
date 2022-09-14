@@ -52,25 +52,26 @@ jobs:
       run: git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
 
 
-    - name: Collection Deploy
+    - name: Collector Deploy
       if: ${{ github.event.inputs.service == 'collector' }}
-      run: |
-        git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
-
-    - name: Deploy # clean out branch and deploy tag
       run: |
         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
         git config --global user.email "${{ github.actor }}@users.noreply.github.com"
         git config --global user.name "${{ github.actor }}"
         git commit --allow-empty -m "test commit to auto trigger ADF CI"
         git push
+        
+#     - name: Deploy # clean out branch and deploy tag
+#       run: |
+#         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+    
  
-    - name: adf-deploy
-      if: ${{ github.event.inputs.service == 'collector' }}
-      uses: ./.github/workflows/collector-adf-deployer_copy.yml
-      with:
-        environment: ${{ github.event.inputs.environment }}
-        branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+#     - name: adf-deploy
+#       if: ${{ github.event.inputs.service == 'collector' }}
+#       uses: ./.github/workflows/collector-adf-deployer_copy.yml
+#       with:
+#         environment: ${{ github.event.inputs.environment }}
+#         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
 
 # - uses: actions/checkout@v1
 # - name: My first step
