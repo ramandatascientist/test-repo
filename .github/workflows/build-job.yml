@@ -201,7 +201,16 @@ jobs:
         echo "${{ inputs.branch_name }}"
         echo ${{ matrix.environment }}
         echo "${{ matrix.environment-region }}"
+    
+        # Authentication
         
+    - name: test if
+      if: (${{ inputs.branch_name }} == 'dev/collector' && ${{ matrix.environment }} == 'dev')
+         || (${{ inputs.branch_name }} == 'test/collector' && ${{ matrix.environment }} == 'test')
+         || (${{ inputs.branch_name }} == 'production/collector' && ${{ matrix.environment }} == 'production')
+      run: |
+        echo "hello"
+    
     # Authentication
     - name: Azure Login
       if: (${{ inputs.branch_name }} == 'dev/collector' && ${{ matrix.environment }} == 'dev')
