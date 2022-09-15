@@ -196,6 +196,11 @@ jobs:
           dir env:
         azPSVersion: '3.1.0'
         
+    - name: Echo the passing on variables
+      run: |
+        echo "${{ inputs.branch_name }}"
+        echo matrix.environment
+        
     # Authentication
     - name: Azure Login
       if: (${{ inputs.branch_name }} == 'dev/collector' && matrix.environment == 'dev')
