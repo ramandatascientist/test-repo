@@ -1,0 +1,146 @@
+name: CAR - All Deployer Copy (Lyle)    # currently auto-deploy to dev cc is turned off
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        type: choice
+        description: 'Select the service that you like to deploy (eg: collector, datastore, refinery)'
+        options:
+        - collector
+        - datastore
+        - refinery
+      tags:
+        description: 'Enter the tag that you like to deploy (eg: refinery-v1.16.0)'
+      environment:
+        type: choice
+        description: Select the environment where you like to deploy
+        options:
+        - dev
+        - test
+        - production
+
+
+jobs:
+  validate-tag:
+    runs-on: ubuntu-latest 
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+          
+    - name: validate tag
+      run: git show-ref --verify refs/tags/${{ github.event.inputs.tags }}
+      
+#     - name: remove whitespaces
+#       shell: bash
+#       run:  echo "TAG_NAME=$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})"  >> $GITHUB_ENV
+      
+    - name: remove whitespaces
+      id: remove_whitespaces
+      run: echo "::set-output name=TAG_NAME::$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})"
+      
+    - name: Output coverage found
+      run: echo "Coverage found ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
+      
+    - name: Refinery Deploy test
+      if: ${{ github.event.inputs.service == 'refinery' }}
+      run: git push origin ${{steps.remove_whitespaces.outputs.TAG_NAME}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+      
+#echo "::set-output name=TAG_NAME::$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})"
+#curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_TEST_CANADA_DEPLOY_SECRET }}" https://analytics-test.ca.symend.com/webhooks/projects/symend/deploy/ref/${{ env.TAG_SHA }}
+# echo "TAG_SHA=$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})" >> $GITHUB_ENV
+# # $(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<"${output}")
+       
+  deploy-tag:
+    runs-on: ubuntu-latest
+    needs: [ validate-tag ]
+    
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.TEST_SECRET }}
+        
+    - name: pull and fetch
+      run: |
+        git pull origin main
+        git fetch
+        
+#     - name: Refinery Deploy test
+#       if: ${{ github.event.inputs.service == 'refinery' }}
+#       run: git push origin ${{steps.remove_whitespaces.outputs.TAG_NAME}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+        
+#     - name: Refinery Deploy
+#       if: ${{ github.event.inputs.service == 'refinery' }}
+#       run: git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+
+
+#     - name: Collector Deploy
+#       if: ${{ github.event.inputs.service == 'collector' }}
+#       run: |
+#         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+
+# git push origin collector-v1.11.0:dev/refinery --force
+# git checkout ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+# git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+# git config --global user.name "${{ github.actor }}"
+# git commit --allow-empty -m "test commit to auto trigger ADF CI"
+# git push
+        
+#     - name: Deploy # clean out branch and deploy tag
+#       run: |
+#         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+    
+ 
+#     - name: adf-deploy
+#       if: ${{ github.event.inputs.service == 'collector' }}
+#       uses: ./.github/workflows/collector-adf-deployer_copy.yml
+#       with:
+#         environment: ${{ github.event.inputs.environment }}
+#         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+
+# - uses: actions/checkout@v1
+# - name: My first step
+# uses: ./.github/actions/my-action
+
+
+#   deploy-adf:
+#     runs-on: ubuntu-latest
+#     needs: [ deploy-tag ]
+
+#     steps:
+#     - uses: actions/checkout@v2
+#       with:
+#         fetch-depth: 0
+        
+#     - name: adf-deploy
+#       if: ${{ github.event.inputs.service == 'collector' }}
+#       uses: ./.github/workflows/collector-adf-deployer_copy.yml
+#       with:
+#         environment: ${{ github.event.inputs.environment }}
+#         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+  
+#   adf-deploy:
+#       runs-on: ubuntu-latest
+#       needs: [ deploy-tag ]
+
+#       steps:
+#       - uses: actions/checkout@v2
+#         with:
+#           fetch-depth: 0
+#           token: ${{ secrets.TEST_SECRET }}
+
+#       - name: adf-deploy
+#         if: ${{ github.event.inputs.service == 'collector' }}
+#         uses: ./.github/workflows/collector-adf-deployer_copy.yml
+#         with:
+#           environment: ${{ github.event.inputs.environment }}
+#           branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+      
+# steps:
+#     - uses: actions/checkout@v1
+#       name: Checkout
+#     - uses: ./.github/actions/automatic-tests
+#       name: Test
+        
