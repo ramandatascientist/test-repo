@@ -1,10 +1,6 @@
 name: Build Job
 on:
-#   workflow_run:
-#     workflows: [build-job]
-#     types: [completed]
-    
-#   workflow_dispatch:
+
   workflow_call:
     inputs:
       environment:
@@ -13,7 +9,17 @@ on:
       branch_name:
         required: true
         type: string
-    
+
+#     inputs:
+#       environment:
+#         required: true
+#         type: string
+#     secrets:
+#       branch_name:
+#         required: true
+#         type: string
+   
+   
 #   push:
 #     branches:
 #       - 'dev/collector'
@@ -175,8 +181,10 @@ jobs:
         echo "$INFRA_HOST"
         echo "$INFRA_RESOURCE_GROUP"
         echo "$SERVER_NAME"
-        echo ${{ github.event.inputs.branch_name }}
+        echo ${{ inputs.environment }}
+        echo ${{ inputs.branch_name }}
         echo ${{ github.event.inputs.environment }}
+        echo ${{ github.event.inputs.branch_name }}
         
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout repo
