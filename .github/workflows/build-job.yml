@@ -188,9 +188,9 @@ jobs:
         azPSVersion: '3.1.0'
     # Authentication
     - name: Azure Login
-      if: (branch_name == 'refs/heads/dev/collector' && matrix.environment == 'dev')
-         || (branch_name == 'refs/heads/test/collector' && matrix.environment == 'test')
-         || (branch_name == 'refs/heads/production/collector' && matrix.environment == 'prod')
+      if: (${{ github.event.inputs.branch_name }} == 'refs/heads/dev/collector' && matrix.environment == 'dev')
+         || (${{ github.event.inputs.branch_name }} == 'refs/heads/test/collector' && matrix.environment == 'test')
+         || (${{ github.event.inputs.branch_name }} == 'refs/heads/production/collector' && matrix.environment == 'prod')
       uses: azure/login@v1
       with:
         creds: ${{ env.AZURE_CREDENTIALS }}
@@ -199,9 +199,9 @@ jobs:
 
     # Stop ADF triggers
     - name: Azure PowerShell script Stop ADF Triggers
-      if: (branch_name == 'dev/collector' && matrix.environment == 'dev')
-         || (branch_name == 'test/collector' && matrix.environment == 'test')
-         || (branch_name == '/production/collector' && matrix.environment == 'prod')
+      if: (${{ github.event.inputs.branch_name }} == 'dev/collector' && matrix.environment == 'dev')
+         || (${{ github.event.inputs.branch_name }} == 'test/collector' && matrix.environment == 'test')
+         || (${{ github.event.inputs.branch_name }} == '/production/collector' && matrix.environment == 'prod')
       run: |
         Install-Module -Name Az.DataFactory -Force
         ./collector/build/PrePostDeploymentScript.ps1  -armTemplate "${{ env.BUILD_DIR }}${{ env.SOURCE_ADF_NAME }}/ARMTemplateForFactory.json" -ResourceGroupName "${{ env.RESOURCE_GROUP_NAME }}" -DataFactoryName "${{ env.TARGET_ADF_NAME }}" -predeployment $true -deleteDeployment $false
