@@ -187,6 +187,7 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout repo
       uses: actions/checkout@v2
+      
     # Show the environment variables for debugging
     - name: Display Environment Variable
       uses: azure/powershell@v1
@@ -194,6 +195,7 @@ jobs:
         inlineScript: |
           dir env:
         azPSVersion: '3.1.0'
+        
     # Authentication
     - name: Azure Login
       if: (${{ inputs.branch_name }} == 'dev/collector' && ${{ inputs.environment }} == 'dev')
