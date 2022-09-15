@@ -31,7 +31,7 @@ env: # Common environment variables regardless of environment and region
   COLLECTOR_SQL_DATABASES_EXTRACT_PARAMETER: "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().ServerName};Initial Catalog=@{linkedService().DatabaseName}"
   # This directory is where the arm template is located
   BUILD_DIR: ${{ github.workspace }}/collector/build/
-  branch_name: dev/collector # default
+  #branch_name: dev/collector # default
 
 jobs:
   deploy-adf:
