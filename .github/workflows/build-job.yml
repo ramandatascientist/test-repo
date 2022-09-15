@@ -1,18 +1,18 @@
 name: Build Job
 on:
-  workflow_run:
-    workflows: [build-job]
-    types: [completed]
+#   workflow_run:
+#     workflows: [build-job]
+#     types: [completed]
     
 #   workflow_dispatch:
-#   workflow_call:
-#     inputs:
-#       environment:
-#         required: true
-#         type: string
-#       branch_name:
-#         required: true
-#         type: string
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      branch_name:
+        required: true
+        type: string
     
 #   push:
 #     branches:
