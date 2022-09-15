@@ -63,7 +63,7 @@ jobs:
         
     - name: adf-deploy
       if: ${{ github.event.inputs.service == 'collector' }}
-      uses: ./.github/workflows/collector-adf-deployer_copy.yml
+      uses: ./.github/workflows/build-job.yml.yml
       with:
         environment: ${{ github.event.inputs.environment }}
         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
