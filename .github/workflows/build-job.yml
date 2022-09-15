@@ -200,6 +200,7 @@ jobs:
       run: |
         echo "${{ inputs.branch_name }}"
         echo ${{ matrix.environment }}
+        echo "${{ matrix.environment-region }}"
         
     # Authentication
     - name: Azure Login
