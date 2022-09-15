@@ -198,9 +198,9 @@ jobs:
         
     # Authentication
     - name: Azure Login
-      if: (${{ inputs.branch_name }} == 'dev/collector' && ${{ inputs.environment }} == 'dev')
-         || (${{ inputs.branch_name }} == 'test/collector' && ${{ inputs.environment }} == 'test')
-         || (${{ inputs.branch_name }} == 'production/collector' && ${{ inputs.environment }} == 'production')
+      if: (${{ inputs.branch_name }} == 'dev/collector' && matrix.environment == 'dev')
+         || (${{ inputs.branch_name }} == 'test/collector' && matrix.environment == 'test')
+         || (${{ inputs.branch_name }} == 'production/collector' && matrix.environment == 'production')
       uses: azure/login@v1
       with:
         creds: ${{ env.AZURE_CREDENTIALS }}
@@ -209,9 +209,9 @@ jobs:
 
     # Stop ADF triggers
     - name: Azure PowerShell script Stop ADF Triggers
-      if: (${{ inputs.branch_name }} == 'dev/collector' && ${{ inputs.environment }} == 'dev')
-         || (${{ inputs.branch_name }} == 'test/collector' && ${{ inputs.environment }} == 'test')
-         || (${{ inputs.branch_name }} == 'production/collector' && ${{ inputs.environment }} == 'production')
+      if: (${{ inputs.branch_name }} == 'dev/collector' && matrix.environment == 'dev')
+         || (${{ inputs.branch_name }} == 'test/collector' && matrix.environment == 'test')
+         || (${{ inputs.branch_name }} == 'production/collector' && matrix.environment == 'production')
       run: |
         Install-Module -Name Az.DataFactory -Force
         ./collector/build/PrePostDeploymentScript.ps1  -armTemplate "${{ env.BUILD_DIR }}${{ env.SOURCE_ADF_NAME }}/ARMTemplateForFactory.json" -ResourceGroupName "${{ env.RESOURCE_GROUP_NAME }}" -DataFactoryName "${{ env.TARGET_ADF_NAME }}" -predeployment $true -deleteDeployment $false
@@ -219,9 +219,9 @@ jobs:
       
     #Deployment of ARM template
     - name: Deploy ARM Template
-      if: (${{ inputs.branch_name }} == 'dev/collector' && ${{ inputs.environment }} == 'dev')
-         || (${{ inputs.branch_name }} == 'test/collector' && ${{ inputs.environment }} == 'test')
-         || (${{ inputs.branch_name }} == 'production/collector' && ${{ inputs.environment }} == 'production')
+      if: (${{ inputs.branch_name }} == 'dev/collector' && matrix.environment == 'dev')
+         || (${{ inputs.branch_name }} == 'test/collector' && matrix.environment == 'test')
+         || (${{ inputs.branch_name }} == 'production/collector' && matrix.environment == 'production')
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
@@ -242,9 +242,9 @@ jobs:
 
     # Start ADF triggers
     - name: Azure PowerShell script Start ADF Triggers
-      if: (${{ inputs.branch_name }} == 'dev/collector' && ${{ inputs.environment }} == 'dev')
-         || (${{ inputs.branch_name }} == 'test/collector' && ${{ inputs.environment }} == 'test')
-         || (${{ inputs.branch_name }} == 'production/collector' && ${{ inputs.environment }} == 'production')
+      if: (${{ inputs.branch_name }} == 'dev/collector' && matrix.environment == 'dev')
+         || (${{ inputs.branch_name }} == 'test/collector' && matrix.environment == 'test')
+         || (${{ inputs.branch_name }} == 'production/collector' && matrix.environment == 'production')
       run: |
             Install-Module -Name Az.Resources -Force
             ./collector/build/PrePostDeploymentScript.ps1  -armTemplate "${{ env.BUILD_DIR }}${{ env.SOURCE_ADF_NAME }}/ARMTemplateForFactory.json" -ResourceGroupName "${{ env.RESOURCE_GROUP_NAME }}" -DataFactoryName "${{ env.TARGET_ADF_NAME }}" -predeployment $false -deleteDeployment $true
