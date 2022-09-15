@@ -199,7 +199,7 @@ jobs:
     - name: Echo the passing on variables
       run: |
         echo "${{ inputs.branch_name }}"
-        echo matrix.environment
+        echo ${{ matrix.environment }}
         
     # Authentication
     - name: Azure Login
