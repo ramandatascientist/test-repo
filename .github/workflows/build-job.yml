@@ -50,7 +50,7 @@ jobs:
       # we want to ensure we don't fail fast (i.e. fail the other matrix jobs just because the current one has failed).
       fail-fast: false
       matrix:
-        environment: [dev, test, prod]
+        environment: [dev, test, production]
         region: [cc, use]
         exclude:
           - environment: test
@@ -110,7 +110,7 @@ jobs:
             infra_resource_group: test-sql-cc
             server_name: test-clusterinfra-cc
             
-          - environment: prod
+          - environment: production
             region: cc
             # Adding parameters specific to this combination of environment & region:
             environment-region: prod-cc
@@ -128,7 +128,7 @@ jobs:
             infra_resource_group: prod-sql-cc
             server_name: prod-clusterinfra-cc
 
-          - environment: prod
+          - environment: production
             region: use
             # Adding parameters specific to this combination of environment & region:
             environment-region: prod-use
