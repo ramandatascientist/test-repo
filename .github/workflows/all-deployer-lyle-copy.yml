@@ -54,11 +54,18 @@ jobs:
         git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
         
         
-    - name: adf-deploy
-      if: ${{ github.event.inputs.service == 'collector' }}
-      uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
-      with:
-        environment: ${{ github.event.inputs.environment }}
-        branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+#     - name: adf-deploy
+#       if: ${{ github.event.inputs.service == 'collector' }}
+#       uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
+#       with:
+#         environment: ${{ github.event.inputs.environment }}
+#         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+        
+  checkout:
+    if: ${{ github.event.inputs.service == 'collector' }}
+    uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
+    with:
+      environment: ${{ github.event.inputs.environment }}
+      branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
   
 # ./.github/workflows/build-job.yml        
