@@ -32,18 +32,6 @@ jobs:
     - name: validate tag
       run: git show-ref --verify refs/tags/${{ github.event.inputs.tags }}
       
-      
-    - name: remove whitespaces
-      id: remove_whitespaces
-      run: echo "::set-output name=TAG_NAME::$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})"
-      
-    - name: Output coverage found
-      run: echo "Coverage found ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
-      
-    - name: Refinery Deploy test
-      if: ${{ github.event.inputs.service == 'refinery' }}
-      run: git push origin ${{steps.remove_whitespaces.outputs.TAG_NAME}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
-      
        
   deploy-tag:
     runs-on: ubuntu-latest
@@ -59,6 +47,11 @@ jobs:
       run: |
         git pull origin main
         git fetch
+        
+    - name: Deploy Tag
+      if: ${{ github.event.inputs.service == 'collector' }}
+      run: |
+        git push origin ${{ github.event.inputs.tags }}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
         
         
     - name: adf-deploy
