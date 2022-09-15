@@ -188,9 +188,9 @@ jobs:
         azPSVersion: '3.1.0'
     # Authentication
     - name: Azure Login
-      if: (github.ref == 'refs/heads/dev/collector' && matrix.environment == 'dev')
-         || (github.ref == 'refs/heads/test/collector' && matrix.environment == 'test')
-         || (github.ref == 'refs/heads/production/collector' && matrix.environment == 'prod')
+      if: (branch_name == 'refs/heads/dev/collector' && matrix.environment == 'dev')
+         || (branch_name == 'refs/heads/test/collector' && matrix.environment == 'test')
+         || (branch_name == 'refs/heads/production/collector' && matrix.environment == 'prod')
       uses: azure/login@v1
       with:
         creds: ${{ env.AZURE_CREDENTIALS }}
