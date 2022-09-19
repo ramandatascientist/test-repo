@@ -35,8 +35,8 @@ jobs:
       id: remove_whitespaces
       run: echo "::set-output name=TAG_NAME::$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})"          
   
-    - name: Print Output Tag
-      run: echo "Tag provided ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
+    - name: print input tag
+      run: echo "tag provided ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
   
     - name: validate tag
       run: git show-ref --verify refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}
@@ -57,13 +57,10 @@ jobs:
         git pull origin main
         git fetch
         
-    - name: Print Output Tag
-      run: echo "Tag provided ${{needs.validate-tag.outputs.tag}}"
-        
     - name: Deploy test
       run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
       
-  checkout:
+  adf-template-deploy:
     needs: [ deploy-tag ]
     if: ${{ github.event.inputs.service == 'collector' }}
     uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
