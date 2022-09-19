@@ -138,9 +138,11 @@ jobs:
 #           environment: ${{ github.event.inputs.environment }}
 #           branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
       
-# steps:
-#     - uses: actions/checkout@v1
-#       name: Checkout
-#     - uses: ./.github/actions/automatic-tests
-#       name: Test
+  checkout:
+    needs: [ deploy-tag ]
+    if: ${{ github.event.inputs.service == 'collector' }}
+    uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
+    with:
+      environment: ${{ github.event.inputs.environment }}
+      branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         
