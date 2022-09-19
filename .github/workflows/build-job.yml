@@ -31,7 +31,7 @@ jobs:
       # we want to ensure we don't fail fast (i.e. fail the other matrix jobs just because the current one has failed).
       fail-fast: false
       matrix:
-#         environment: [dev, test, production] # use arbitrary combinations
+#         environment: [dev, test, production] # use arbitrary combinations and then 'exlude test use', instead we just used 'include'
 #         region: [cc, use]
 #         exclude: # its already in include
 #           - environment: test
