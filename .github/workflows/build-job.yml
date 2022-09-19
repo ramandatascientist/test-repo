@@ -163,8 +163,8 @@ jobs:
         echo "$INFRA_HOST"
         echo "$INFRA_RESOURCE_GROUP"
         echo "$SERVER_NAME"
-        echo inputs.environment
-        echo inputs.branch_name
+        echo ${{ inputs.environment }}
+        echo ${{ inputs.branch_name }}
         
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout repo
