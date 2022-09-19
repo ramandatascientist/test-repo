@@ -43,13 +43,8 @@ jobs:
     - name: Output coverage found
       run: echo "Coverage found ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
       
-    - name: Refinery Deploy test
-      run: git push origin ${{steps.remove_whitespaces.outputs.TAG_NAME}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
-      
-#echo "::set-output name=TAG_NAME::$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})"
-#curl -i -H "X-Looker-Deploy-Secret:${{ secrets.PRESENTATION_TEST_CANADA_DEPLOY_SECRET }}" https://analytics-test.ca.symend.com/webhooks/projects/symend/deploy/ref/${{ env.TAG_SHA }}
-# echo "TAG_SHA=$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})" >> $GITHUB_ENV
-# # $(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<"${output}")
+#     - name: Deploy test
+#       run: git push origin ${{steps.remove_whitespaces.outputs.TAG_NAME}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
        
   deploy-tag:
     runs-on: ubuntu-latest
@@ -65,6 +60,10 @@ jobs:
       run: |
         git pull origin main
         git fetch
+        
+    - name: Deploy test
+      run: git push origin ${{needs.validate-tag.outputs.TAG_NAME}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+     
         
 #     - name: Refinery Deploy test
 #       if: ${{ github.event.inputs.service == 'refinery' }}
