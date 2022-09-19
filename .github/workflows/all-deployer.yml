@@ -62,7 +62,7 @@ jobs:
         git fetch
         
     - name: Output tag found
-      run: echo "Coverage found ${{needs.validate-tag.outputs.TAG_NAME}}"
+      run: echo "Coverage found ${{needs.remove_whitespaces.outputs.TAG_NAME}}"
         
 #     - name: Deploy test
 #       run: git push origin ${{needs.validate-tag.outputs.TAG_NAME}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
