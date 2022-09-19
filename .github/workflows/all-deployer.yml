@@ -41,9 +41,6 @@ jobs:
     - name: validate tag
       run: git show-ref --verify refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}
     
-      
-#     - name: Deploy test
-#       run: git push origin ${{steps.remove_whitespaces.outputs.TAG_NAME}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
        
   deploy-tag:
     runs-on: ubuntu-latest
