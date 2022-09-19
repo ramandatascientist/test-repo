@@ -66,11 +66,11 @@ jobs:
     - name: Deploy test
       run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
       
-#   checkout:
-#     needs: [ deploy-tag ]
-#     if: ${{ github.event.inputs.service == 'collector' }}
-#     uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
-#     with:
-#       environment: ${{ github.event.inputs.environment }}
-#       branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+  checkout:
+    needs: [ deploy-tag ]
+    if: ${{ github.event.inputs.service == 'collector' }}
+    uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
+    with:
+      environment: ${{ github.event.inputs.environment }}
+      branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         
