@@ -44,7 +44,6 @@ jobs:
       run: echo "Coverage found ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
       
     - name: Refinery Deploy test
-      if: ${{ github.event.inputs.service == 'refinery' }}
       run: git push origin ${{steps.remove_whitespaces.outputs.TAG_NAME}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
       
 #echo "::set-output name=TAG_NAME::$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})"
