@@ -163,8 +163,8 @@ jobs:
         echo "$INFRA_HOST"
         echo "$INFRA_RESOURCE_GROUP"
         echo "$SERVER_NAME"
-        echo ${{ inputs.environment }}
-        echo ${{ inputs.branch_name }}
+        echo "${{ inputs.environment }}"
+        echo "${{ inputs.branch_name }}"
         
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout repo
@@ -178,12 +178,6 @@ jobs:
           dir env:
         azPSVersion: '3.1.0'
         
-#     - name: Echo the branch and environment variables
-#       run: |
-#         echo "${{ inputs.branch_name }}"
-#         echo "${{ matrix.environment }}"
-#         echo "${{ matrix.environment-region }}"
-    
 
     # Authentication
     - name: Azure Login
