@@ -50,12 +50,13 @@ jobs:
       # we want to ensure we don't fail fast (i.e. fail the other matrix jobs just because the current one has failed).
       fail-fast: false
       matrix:
-        environment: [dev, test, production]
-        region: [cc, use]
-        exclude:
-          - environment: test
-            region: use # We don't have USE (US East) in Test
-        include:
+#         environment: [dev, test, production] # use arbitrary combinations
+#         region: [cc, use]
+#         exclude: # its already in include
+#           - environment: test
+#             region: use # We don't have USE (US East) in Test
+
+        include: # you providing the combinations
           - environment: dev
             region: cc
             # Adding parameters specific to this combination of environment & region:
