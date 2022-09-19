@@ -31,9 +31,9 @@ jobs:
       # we want to ensure we don't fail fast (i.e. fail the other matrix jobs just because the current one has failed).
       fail-fast: false
       matrix:
-#         environment: [dev, test, production] # use arbitrary combinations and then 'exlude test use', instead we just used 'include'
+#         environment: [dev, test, production] # use arbitrary combinations of env and region (and will run the jobs below 6 times) and then 'exlude test use', instead we just used 'include' (so left with 5 jobs).
 #         region: [cc, use]
-#         exclude: # its already in include
+#         exclude: # its already in include. so dont need to use env [] and region []
 #           - environment: test
 #             region: use # We don't have USE (US East) in Test
 
@@ -163,8 +163,8 @@ jobs:
         echo "$INFRA_HOST"
         echo "$INFRA_RESOURCE_GROUP"
         echo "$SERVER_NAME"
-        echo ${{ inputs.environment }}
-        echo ${{ inputs.branch_name }}
+        echo inputs.environment
+        echo inputs.branch_name
         
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout repo
@@ -178,21 +178,13 @@ jobs:
           dir env:
         azPSVersion: '3.1.0'
         
-    - name: Echo the passing on variables
-      run: |
-        echo "${{ inputs.branch_name }}"
-        echo "${{ matrix.environment }}"
-        echo "${{ matrix.environment-region }}"
-    
-        # Authentication
-        
-#     - name: test if
-#       if: (inputs.branch_name == 'dev/collector' && matrix.environment == 'dev')
-#          || (inputs.branch_name == 'test/collector' && matrix.environment == 'test')
-#          || (inputs.branch_name == 'production/collector' && matrix.environment == 'production')
+#     - name: Echo the branch and environment variables
 #       run: |
-#         echo "hello"
+#         echo "${{ inputs.branch_name }}"
+#         echo "${{ matrix.environment }}"
+#         echo "${{ matrix.environment-region }}"
     
+
     # Authentication
     - name: Azure Login
       if: (inputs.branch_name == 'dev/collector' && matrix.environment == 'dev')
