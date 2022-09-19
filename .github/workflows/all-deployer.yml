@@ -34,7 +34,7 @@ jobs:
       run: echo "::set-output name=TAG_NAME::$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})"          
   
     - name: Print Output Tag
-      run: echo "Coverage found ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
+      run: echo "Tag provided ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
   
     - name: validate tag
       run: git show-ref --verify refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}
@@ -59,7 +59,7 @@ jobs:
         git fetch
         
     - name: Print Output Tag
-      run: echo "Coverage found ${{needs.validate-tag.outputs.TAG_NAME}}"
+      run: echo "Tag provided ${{needs.validate-tag.outputs.TAG_NAME}}"
         
 #     - name: Deploy test
 #       run: git push origin ${{needs.validate-tag.outputs.TAG_NAME}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
