@@ -63,7 +63,7 @@ jobs:
   adf-template-deploy:
     needs: [ deploy-tag ]
     if: ${{ github.event.inputs.service == 'collector' }}
-    uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@542e07af43c74eb7a06f7b07f0c8536f31a4a900
+    uses: ./.github/workflows/build-job.yml
     with:
       environment: ${{ github.event.inputs.environment }}
       branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
