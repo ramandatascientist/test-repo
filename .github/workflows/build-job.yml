@@ -144,6 +144,11 @@ jobs:
       SERVER_NAME: ${{matrix.server_name}}
 
     steps:
+    
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ inputs.branch_name }}
+        
     - name: Echo the variables
       run: |
         echo "$AZURE_SUBSCRIPTION_ID"
@@ -168,11 +173,11 @@ jobs:
         echo "${{ github.ref }}"
         
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - name: Checkout repo
-      #uses: actions/checkout@v2
-      uses: actions/checkout@v3
-      with:
-        ref: ${{ inputs.branch_name }}
+#     - name: Checkout repo
+#       #uses: actions/checkout@v2
+#       uses: actions/checkout@v3
+#       with:
+#         ref: ${{ inputs.branch_name }}
       
 #     steps:
 #     - uses: actions/checkout@v3
