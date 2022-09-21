@@ -165,6 +165,7 @@ jobs:
         echo "$SERVER_NAME"
         echo "${{ inputs.environment }}"
         echo "${{ inputs.branch_name }}"
+        echo "${{ github.ref }}"
         
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout repo
