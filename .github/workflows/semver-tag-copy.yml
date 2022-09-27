@@ -24,6 +24,12 @@ jobs:
   calculate-version:
     name: Calculate Version
     runs-on: ubuntu-latest
+    strategy:
+      # We're using the matrix strategy so that we run the right steps for the right service.
+      # Since a job might fail, we don't fail fast to allow all jobs to attempt to run.
+      fail-fast: false
+      matrix:
+        service: [datastore, collector, refinery]
     
     outputs:
       tag: ${{ steps.version.outputs.tag }}
