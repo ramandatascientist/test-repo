@@ -4,4 +4,3 @@ test123
 combined-test
 1234
 commit4
-commit5
