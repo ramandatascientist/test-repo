@@ -54,55 +54,6 @@ jobs:
         name: metadata
         path: version.json
 
-
-      
-# jobs:
-#   calculate-version:
-#     name: Calculate Version
-#     runs-on: ubuntu-latest
-#     env:
-#       SERVICE_NAME: ${{ matrix.service }}
-        
-#     outputs:
-#       tag: ${{ steps.version.outputs.tag }}
-      
-#     steps:
-#     - uses: actions/checkout@v2
-#       with:
-#         fetch-depth: 0
-        
-#     - uses: dorny/paths-filter@v2
-#       id: pathfilter
-#       with:
-#         filters: |
-#           collector: 'collector/**'
-#           datastore: 'datastore/**'
-#           refinery: 'refinery/**'
-          
-        
-#     - name: Determine Version
-#       id: version
-#       if: (steps.pathfilter.outputs.datastore == 'true' && matrix.service == 'datastore')
-#         || (steps.pathfilter.outputs.collector == 'true' && matrix.service == 'collector')
-#         || (steps.pathfilter.outputs.refinery == 'true' && matrix.service == 'refinery')
-#       env:
-#         GIT_BRANCH: ${{ github.ref_name }}
-#         GIT_TAG_PREFIX: "${{ env.SERVICE_NAME }}-v"
-#       shell: bash
-#       run: ./config/version.sh
-      
-#     - name: Dump version metadata
-#       env:
-#         JSON: ${{ toJson(steps.version.outputs) }}
-#       run: |
-#         echo "$JSON" > version.json
-        
-#     - name: Upload version metadata
-#       uses: actions/upload-artifact@v2
-#       with:
-#         name: versions
-#         path: version.json
-
   tag-sources:
     name: 'Tag sources'
     runs-on: ubuntu-latest
