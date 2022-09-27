@@ -66,7 +66,7 @@ jobs:
     - name: 'Tag sources'   
       if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') 
       env:
-        TAG: ${{ needs.calculate-version.outputs.tag }}
+        TAG: ${{ steps.version.outputs.tag }}
       uses: actions/github-script@v6
       with:
         script: |
