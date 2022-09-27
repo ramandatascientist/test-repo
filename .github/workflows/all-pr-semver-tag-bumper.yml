@@ -62,30 +62,39 @@ jobs:
       with:
         name: versions
         path: version.json
-
-  tag-sources:
-    name: 'Tag sources'
-    runs-on: ubuntu-latest
-    needs: [ calculate-version ]
-    strategy:
-      # We're using the matrix strategy so that we run the right steps for the right service.
-      # Since a job might fail, we don't fail fast to allow all jobs to attempt to run.
-      fail-fast: false
-      matrix:
-        service: [datastore, collector, refinery]
         
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') 
-    env:
-      TAG: ${{ needs.calculate-version.outputs.tag }}
+    - name: 'Tag sources'   
+      if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') 
+      env:
+        TAG: ${{ needs.calculate-version.outputs.tag }}
+      uses: actions/github-script@v6
+      with:
+        script: |
+          await github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: "refs/tags/${{ env.TAG }}",
+            sha: context.sha
+          })
+        
+        
 
-    steps:
-      - name: Create tag
-        uses: actions/github-script@v6
-        with:
-          script: |
-            await github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/${{ env.TAG }}",
-              sha: context.sha
-            })
+#   tag-sources:
+#     name: 'Tag sources'
+#     runs-on: ubuntu-latest
+#     needs: [ calculate-version ]    
+#     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') 
+#     env:
+#       TAG: ${{ needs.calculate-version.outputs.tag }}
+
+#     steps:
+#       - name: Create tag
+#         uses: actions/github-script@v6
+#         with:
+#           script: |
+#             await github.rest.git.createRef({
+#               owner: context.repo.owner,
+#               repo: context.repo.repo,
+#               ref: "refs/tags/${{ env.TAG }}",
+#               sha: context.sha
+#             })
