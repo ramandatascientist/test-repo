@@ -52,6 +52,7 @@ jobs:
       run: ./config/version.sh
       
     - name: Dump version metadata
+      if: steps.version.conclusion != 'skipped'
       env:
         JSON: ${{ toJson(steps.version.outputs) }}
       run: |
@@ -59,6 +60,7 @@ jobs:
         
     - name: Upload version metadata
       uses: actions/upload-artifact@v2
+      if: steps.version.conclusion != 'skipped'
       with:
         name: versions
         path: version.json
