@@ -1,0 +1,248 @@
+name: Build Job Copy
+on:
+
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      branch_name:
+        required: true
+        type: string
+
+env: # Common environment variables regardless of environment and region
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }} 
+  AZURE_CREDENTIALS: ${{ secrets.COLLECTOR_SPN_CREDENTIALS }}
+  SOURCE_ADF_NAME: 'dev-use-collector-adf'
+  # This parameter will initialize and override the value of ADF linked service collector_sql_databases_extract
+  COLLECTOR_SQL_DATABASES_EXTRACT_PARAMETER: "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().ServerName};Initial Catalog=@{linkedService().DatabaseName}"
+  # This directory is where the arm template is located
+  BUILD_DIR: ${{ github.workspace }}/collector/build/
+  #branch_name: dev/collector # default
+
+jobs:
+  deploy-adf:
+    runs-on: ubuntu-latest
+
+    strategy:
+      # We're using the matrix strategy so that we only run the right jobs for the right deployment environments.
+      # Therefore, we have conditions within the job to validate that we're running the correct deployment.
+      # Since more than one deployment will fail (eg. dev deploy and test deploy) in order for the correct deployment to succeed (eg. prod deploy), 
+      # we want to ensure we don't fail fast (i.e. fail the other matrix jobs just because the current one has failed).
+      fail-fast: false
+      matrix:
+#         environment: [dev, test, production] # use arbitrary combinations of env and region (and will run the jobs below 6 times) and then 'exlude test use', instead we just used 'include' (so left with 5 jobs).
+#         region: [cc, use]
+#         exclude: # its already in include. so dont need to use env [] and region []
+#           - environment: test
+#             region: use # We don't have USE (US East) in Test
+
+        include: # you providing the combinations
+          - environment: dev
+            region: cc
+            # Adding parameters specific to this combination of environment & region:
+            environment-region: dev-cc
+            resource-group: dev-analytics-cc
+            target-adf: dev-cc-collector-adf
+            # Below are the environment and region specific parameters for adf trigger:
+            akv_name: dev-cc-collector-akv
+            region_key: Canada
+            driver_filter_clause: AND TRUE
+            incremental_merge: true
+            driver_database: DEV_PLATFORM
+            incremental_sync_mask: true
+            dbt_jobs: 92240,92242,92263,92264,92266,93932,93936
+            sql_server_infra_host: dev-clusterinfra-cc.database.windows.net
+            infra_resource_group: dev-sql-cc
+            server_name: dev-clusterinfra-cc
+
+          - environment: dev
+            region: use
+            # Adding parameters specific to this combination of environment & region:
+            environment-region: dev-use
+            resource-group: dev-analytics-use
+            target-adf: dev-use-collector-adf
+            # Below are the environment and region specific parameters for adf trigger:
+            akv_name: dev-use-collector-akv
+            region_key: USA
+            driver_filter_clause: AND TRUE
+            incremental_merge: true
+            driver_database: DEV_PLATFORM
+            incremental_sync_mask: true
+            dbt_jobs: 117681,117683,117684,118063,118064,118065,118066
+            sql_server_infra_host: dev-clusterinfra-use.database.windows.net
+            infra_resource_group: dev-sql-use 
+            server_name: dev-clusterinfra-use
+            
+          - environment: test
+            region: cc
+            # Adding parameters specific to this combination of environment & region:
+            environment-region: test-cc
+            resource-group: test-analytics-cc
+            target-adf: test-cc-collector-adf
+            # Below are the environment and region specific parameters for adf trigger:
+            akv_name: test-cc-collector-akv
+            region_key: Canada
+            driver_filter_clause: AND TRUE
+            incremental_merge: true
+            driver_database: TEST_PLATFORM
+            incremental_sync_mask: true
+            dbt_jobs: 92623,92624,92625,92631,92632,93937,93939
+            sql_server_infra_host: test-clusterinfra-cc.database.windows.net
+            infra_resource_group: test-sql-cc
+            server_name: test-clusterinfra-cc
+            
+          - environment: production
+            region: cc
+            # Adding parameters specific to this combination of environment & region:
+            environment-region: prod-cc
+            resource-group: prod-analytics-cc
+            target-adf: prod-cc-collector-adf
+            # Below are the environment and region specific parameters for adf trigger:
+            akv_name: prod-cc-collector-akv
+            region_key: Canada
+            driver_filter_clause: AND TRUE
+            incremental_merge: true
+            driver_database: PLATFORM
+            incremental_sync_mask: true
+            dbt_jobs: 92653,92654,92655,92657,92659,93940,93941
+            sql_server_infra_host: prod-clusterinfra-cc.database.windows.net
+            infra_resource_group: prod-sql-cc
+            server_name: prod-clusterinfra-cc
+
+          - environment: production
+            region: use
+            # Adding parameters specific to this combination of environment & region:
+            environment-region: prod-use
+            resource-group: prod-analytics-use
+            target-adf: prod-use-collector-adf
+            # Below are the environment and region specific parameters for adf trigger:
+            akv_name: prod-use-collector-akv
+            region_key: USA
+            driver_filter_clause: AND TRUE
+            incremental_merge: true
+            driver_database: PLATFORM
+            incremental_sync_mask: true
+            dbt_jobs: 92639,92640,92648,92649,92651,93942,93943
+            sql_server_infra_host: prod-clusterinfra-use.database.windows.net
+            infra_resource_group: prod-sql-use
+            server_name: prod-clusterinfra-use
+
+    environment: ${{ matrix.environment-region }}
+    env:
+      RESOURCE_GROUP_NAME: ${{ matrix.resource-group }}
+      TARGET_ADF_NAME: ${{ matrix.target-adf }}
+      AZURE_KEY_VAULT_NAME: ${{ matrix.akv_name }}
+      REGION_NAME: ${{ matrix.region_key }}
+      DATABASE_DRIVER_FILTER_CLAUSE: ${{ matrix.driver_filter_clause }}
+      INCREMENTAL_MERGE_LOAD_TO_RAW: ${{ matrix.incremental_merge }}
+      DRIVER_DATABASE_NAME: ${{ matrix.driver_database }}
+      INCREMENTAL_SYNC_MASKING_POLICY: ${{ matrix.incremental_sync_mask }}
+      DBT_JOB_IDS: ${{ matrix.dbt_jobs }}
+      INFRA_HOST: ${{ matrix.sql_server_infra_host }}
+      INFRA_RESOURCE_GROUP: ${{matrix.infra_resource_group}}
+      SERVER_NAME: ${{matrix.server_name}}
+
+    steps:
+    
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ inputs.branch_name }}
+        
+    - name: Echo the variables
+      run: |
+        echo "$AZURE_SUBSCRIPTION_ID"
+        echo "$AZURE_CREDENTIALS"
+        echo "$SOURCE_ADF_NAME"
+        echo "$BUILD_DIR"
+        echo "$RESOURCE_GROUP_NAME"
+        echo "$TARGET_ADF_NAME"
+        echo "$COLLECTOR_SQL_DATABASES_EXTRACT_PARAMETER"
+        echo "$AZURE_KEY_VAULT_NAME"
+        echo "$REGION_NAME"
+        echo "$DATABASE_DRIVER_FILTER_CLAUSE"
+        echo "$INCREMENTAL_MERGE_LOAD_TO_RAW"
+        echo "$DRIVER_DATABASE_NAME"
+        echo "$INCREMENTAL_SYNC_MASKING_POLICY"
+        echo "$DBT_JOB_IDS"
+        echo "$INFRA_HOST"
+        echo "$INFRA_RESOURCE_GROUP"
+        echo "$SERVER_NAME"
+        echo "${{ inputs.environment }}"
+        echo "${{ inputs.branch_name }}"
+        echo "${{ github.ref }}"
+        
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#     - name: Checkout repo
+#       #uses: actions/checkout@v2
+#       uses: actions/checkout@v3
+#       with:
+#         ref: ${{ inputs.branch_name }}
+      
+#     steps:
+#     - uses: actions/checkout@v3
+#       with:
+#         ref: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+      
+    # Show the environment variables for debugging
+    - name: Display Environment Variable
+      uses: azure/powershell@v1
+      with:
+        inlineScript: |
+          dir env:
+        azPSVersion: '3.1.0'
+        
+
+    # Authentication
+    - name: Azure Login
+      if: (inputs.branch_name == 'dev/collector' && matrix.environment == 'dev')
+         || (inputs.branch_name == 'test/collector' && matrix.environment == 'test')
+         || (inputs.branch_name == 'production/collector' && matrix.environment == 'production')
+      uses: azure/login@v1
+      with:
+        creds: ${{ env.AZURE_CREDENTIALS }}
+        # set this if you will be using PowerShell
+        enable-AzPSSession: true
+
+    # Stop ADF triggers
+    - name: Azure PowerShell script Stop ADF Triggers
+      if: (inputs.branch_name == 'dev/collector' && matrix.environment == 'dev')
+         || (inputs.branch_name == 'test/collector' && matrix.environment == 'test')
+         || (inputs.branch_name == 'production/collector' && matrix.environment == 'production')
+      run: |
+        Install-Module -Name Az.DataFactory -Force
+        ./collector/build/PrePostDeploymentScript.ps1  -armTemplate "${{ env.BUILD_DIR }}${{ env.SOURCE_ADF_NAME }}/ARMTemplateForFactory.json" -ResourceGroupName "${{ env.RESOURCE_GROUP_NAME }}" -DataFactoryName "${{ env.TARGET_ADF_NAME }}" -predeployment $true -deleteDeployment $false
+      shell: pwsh
+      
+    #Deployment of ARM template
+    - name: Deploy ARM Template
+      if: (inputs.branch_name == 'dev/collector' && matrix.environment == 'dev')
+         || (inputs.branch_name == 'test/collector' && matrix.environment == 'test')
+         || (inputs.branch_name == 'production/collector' && matrix.environment == 'production')
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+        template: ${{ env.BUILD_DIR }}${{ env.SOURCE_ADF_NAME }}/ARMTemplateForFactory.json
+        parameters: ${{ env.BUILD_DIR }}${{ env.SOURCE_ADF_NAME }}/ARMTemplateParametersForFactory.json
+                    factoryName=${{ env.TARGET_ADF_NAME }}
+                    collector_sql_databases_extract_connectionString="${{ env.COLLECTOR_SQL_DATABASES_EXTRACT_PARAMETER }}"
+                    Analytics_Platform_Extract_Load_Raw_properties__Master_Extract_to_Snowflake_parameters_AKV_Name="${{ env.AZURE_KEY_VAULT_NAME }}"
+                    Analytics_Platform_Extract_Load_Raw_properties__Master_Extract_to_Snowflake_parameters_Region_key="${{ env.REGION_NAME }}"
+                    Analytics_Platform_Extract_Load_Raw_properties__Master_Extract_to_Snowflake_parameters_Driver_Filter_Clause="${{ env.DATABASE_DRIVER_FILTER_CLAUSE }}"
+                    Analytics_Platform_Extract_Load_Raw_properties__Master_Extract_to_Snowflake_parameters_Incremental_Merge_Load_to_Raw="${{ env.INCREMENTAL_MERGE_LOAD_TO_RAW }}"
+                    Analytics_Platform_Extract_Load_Raw_properties__Master_Extract_to_Snowflake_parameters_Driver_Database="${{ env.DRIVER_DATABASE_NAME }}"
+                    Analytics_Platform_Extract_Load_Raw_properties__Master_Extract_to_Snowflake_parameters_Incremental_Sync_Mask="${{ env.INCREMENTAL_SYNC_MASKING_POLICY }}"
+                    Analytics_Platform_Extract_Load_Raw_properties__Master_Extract_to_Snowflake_parameters_DBT_Job_IDs="${{ env.DBT_JOB_IDS }}"
+                    adfcollectorpe_properties_privateLinkResourceId="/subscriptions/${{ env.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{env.INFRA_RESOURCE_GROUP}}/providers/Microsoft.Sql/servers/${{env.SERVER_NAME}}"
+                    #adfcollectorpe_properties_fqdns=['"${{env.INFRA_HOST}}"']
+
+    # Start ADF triggers
+    - name: Azure PowerShell script Start ADF Triggers
+      if: (inputs.branch_name == 'dev/collector' && matrix.environment == 'dev')
+         || (inputs.branch_name == 'test/collector' && matrix.environment == 'test')
+         || (inputs.branch_name == 'production/collector' && matrix.environment == 'production')
+      run: |
+            Install-Module -Name Az.Resources -Force
+            ./collector/build/PrePostDeploymentScript.ps1  -armTemplate "${{ env.BUILD_DIR }}${{ env.SOURCE_ADF_NAME }}/ARMTemplateForFactory.json" -ResourceGroupName "${{ env.RESOURCE_GROUP_NAME }}" -DataFactoryName "${{ env.TARGET_ADF_NAME }}" -predeployment $false -deleteDeployment $true
+      shell: pwsh
