@@ -64,7 +64,7 @@ jobs:
         path: version.json
         
     - name: 'Tag sources'   
-      if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') 
+      if: steps.version.conclusion != 'skipped' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) 
       env:
         TAG: ${{ steps.version.outputs.tag }}
       uses: actions/github-script@v6
