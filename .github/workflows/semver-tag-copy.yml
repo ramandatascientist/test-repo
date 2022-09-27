@@ -9,47 +9,38 @@ on:
       - refinery/**
       - datastore/**
       
+
+env:
+  PROJECT_DIR: ${{ github.event.inputs.paths }}
+  PROJECT_NAME: ${{ matrix.service }}
+  PROJECT_TAG_PREFIX: "${{ env.SERVICE_NAME }}-v"
+
+concurrency:
+  group: ${{ matrix.service }}-${{ github.ref }}  # !!! Need to verify this
+  cancel-in-progress: true
+  
+  
 jobs:
   calculate-version:
     name: Calculate Version
     runs-on: ubuntu-latest
-    strategy:
-      # We're using the matrix strategy so that we run the right steps for the right service.
-      # Since a job might fail, we don't fail fast to allow all jobs to attempt to run.
-      fail-fast: false
-      matrix:
-        service: [datastore, collector, refinery]
-
-    env:
-      SERVICE_NAME: ${{ matrix.service }}
-        
+    
     outputs:
       tag: ${{ steps.version.outputs.tag }}
+      semVer: ${{ steps.version.outputs.semVer }}
       
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
         
-    - uses: dorny/paths-filter@v2
-      id: pathfilter
-      with:
-        filters: |
-          collector: 'collector/**'
-          datastore: 'datastore/**'
-          refinery: 'refinery/**'
-          
-        
     - name: Determine Version
       id: version
-      if: (steps.pathfilter.outputs.datastore == 'true' && matrix.service == 'datastore')
-        || (steps.pathfilter.outputs.collector == 'true' && matrix.service == 'collector')
-        || (steps.pathfilter.outputs.refinery == 'true' && matrix.service == 'refinery')
       env:
-        GIT_BRANCH: ${{ github.ref_name }}
-        GIT_TAG_PREFIX: "${{ env.SERVICE_NAME }}-v"
+        GIT_BRANCH: ${{ github.head_ref || github.ref_name }}
+        GIT_TAG_PREFIX: ${{ env.PROJECT_TAG_PREFIX }}
       shell: bash
-      run: ./config/version.sh
+      run: ./bin/version.sh
       
     - name: Dump version metadata
       env:
@@ -60,8 +51,57 @@ jobs:
     - name: Upload version metadata
       uses: actions/upload-artifact@v2
       with:
-        name: versions
+        name: metadata
         path: version.json
+
+
+      
+# jobs:
+#   calculate-version:
+#     name: Calculate Version
+#     runs-on: ubuntu-latest
+#     env:
+#       SERVICE_NAME: ${{ matrix.service }}
+        
+#     outputs:
+#       tag: ${{ steps.version.outputs.tag }}
+      
+#     steps:
+#     - uses: actions/checkout@v2
+#       with:
+#         fetch-depth: 0
+        
+#     - uses: dorny/paths-filter@v2
+#       id: pathfilter
+#       with:
+#         filters: |
+#           collector: 'collector/**'
+#           datastore: 'datastore/**'
+#           refinery: 'refinery/**'
+          
+        
+#     - name: Determine Version
+#       id: version
+#       if: (steps.pathfilter.outputs.datastore == 'true' && matrix.service == 'datastore')
+#         || (steps.pathfilter.outputs.collector == 'true' && matrix.service == 'collector')
+#         || (steps.pathfilter.outputs.refinery == 'true' && matrix.service == 'refinery')
+#       env:
+#         GIT_BRANCH: ${{ github.ref_name }}
+#         GIT_TAG_PREFIX: "${{ env.SERVICE_NAME }}-v"
+#       shell: bash
+#       run: ./config/version.sh
+      
+#     - name: Dump version metadata
+#       env:
+#         JSON: ${{ toJson(steps.version.outputs) }}
+#       run: |
+#         echo "$JSON" > version.json
+        
+#     - name: Upload version metadata
+#       uses: actions/upload-artifact@v2
+#       with:
+#         name: versions
+#         path: version.json
 
   tag-sources:
     name: 'Tag sources'
