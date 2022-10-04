@@ -35,8 +35,10 @@ jobs:
       id: remove_whitespaces
       run: echo "::set-output name=TAG_NAME::$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})"          
   
-    - name: print input tag
-      run: echo "tag provided ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
+    - name: print service input tag
+      run: |
+        echo "tag provided ${{steps.remove_whitespaces.outputs.service}}"
+        echo "tag provided ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
       
   
     - name: validate tag belongs to the selected service# validate if tag belongs to that service and also checks if that tag exist in github
