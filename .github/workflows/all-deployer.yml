@@ -39,14 +39,23 @@ jobs:
       run: |
         echo "tag provided ${{github.event.inputs.service}}"
         echo "tag provided ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
-      
   
-    - name: validate tag belongs to the selected service# validate if tag belongs to that service and also checks if that tag exist in github
-      if: ${{ startsWith(needs.validate-tag.outputs.tag, github.event.inputs.service) }} != true
+  
+  
+    - name: validate tag belongs to the selected service
+      #if: ${{ envA }} != ${{ envB }}
+      if: ${{ !startsWith(needs.validate-tag.outputs.tag, github.event.inputs.service) }}
       uses: actions/github-script@v3
       with:
         script: |
             core.setFailed('tag does not belong to the service selected!')
+  
+#     - name: validate tag belongs to the selected service
+#       if: ${{ startsWith(needs.validate-tag.outputs.tag, github.event.inputs.service) }} != true
+#       uses: actions/github-script@v3
+#       with:
+#         script: |
+#             core.setFailed('tag does not belong to the service selected!')
 
   
     - name: validate tag exist in git repo
