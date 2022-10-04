@@ -37,7 +37,7 @@ jobs:
   
     - name: print service input tag
       run: |
-        echo "tag provided ${{steps.remove_whitespaces.outputs.service}}"
+        echo "tag provided ${github.event.inputs.service}}"
         echo "tag provided ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
       
   
