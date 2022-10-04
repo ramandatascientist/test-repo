@@ -38,8 +38,12 @@ jobs:
     - name: print input tag
       run: echo "tag provided ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
   
-    - name: validate tag
+    - name: validate tag # validate if tag belongs to that service and also checks if that tag exist in github
+      if: ${{ startsWith(${{needs.validate-tag.outputs.tag}}, ${{ github.event.inputs.service }}) }}
       run: git show-ref --verify refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}
+  
+#     - name: validate tag exist
+#       run: git show-ref --verify refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}
     
        
   deploy-tag:
