@@ -19,7 +19,9 @@ on:
         - test
         - production
 
-
+env:
+  DAY_OF_WEEK: Monday
+  
 jobs:
   validate-tag:
     runs-on: ubuntu-latest
@@ -41,15 +43,29 @@ jobs:
         echo "tag provided ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
 
   
-    - name: validate tag belongs to the selected service.          #this step will be skipped if service matches with the tag prefix or else it will fail
-      if: ${{ !startsWith(steps.remove_whitespaces.outputs.TAG_NAME, github.event.inputs.service) }}
-      uses: actions/github-script@v3
-      with:
-        script: |
-            core.setFailed('tag does not belong to the service selected!')
+#     - name: validate tag belongs to the selected service.          #this step will be skipped if service matches with the tag prefix or else it will fail
+#       if: ${{ !startsWith(steps.remove_whitespaces.outputs.TAG_NAME, github.event.inputs.service) }}
+#       uses: actions/github-script@v3
+#       with:
+#         script: |
+#             core.setFailed('tag does not belong to the service selected!')
   
-    - name: validate tag exist in git repo
-      run: git show-ref --verify refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}
+#     - name: validate tag exist in git repo
+#       run: git show-ref --verify refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}
+
+
+    - name: validate tags
+      run: |
+        # check if tag belong to the selected service
+        
+        if [[ "${steps.remove_whitespace.outputs.TAG_NAME}" != "${github.event.inputs.service}*" ]]; then
+          echo "::warning:: Tag does not match service"
+          exit 1
+        fi
+        
+        # test that tag exists
+        git show-ref --verify "refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}"
+        
     
        
   deploy-tag:
