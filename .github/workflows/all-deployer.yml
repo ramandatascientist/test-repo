@@ -19,8 +19,6 @@ on:
         - test
         - production
 
-env:
-  DAY_OF_WEEK: Monday
   
 jobs:
   validate-tag:
@@ -54,6 +52,7 @@ jobs:
         
         # test that tag exists
         git show-ref --verify "refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}"
+        
 
 #     - name: validate tags
 #       run: |
