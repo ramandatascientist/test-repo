@@ -39,34 +39,14 @@ jobs:
       run: |
         echo "tag provided ${{github.event.inputs.service}}"
         echo "tag provided ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
-  
-
-#     - name: validate tag
-#       uses: haya14busa/action-cond@v1
-#       id: condval
-#       with:
-#         cond: ${{ startsWith(steps.remove_whitespaces.outputs.TAG_NAME, github.event.inputs.service) }}
-#         if_true: git show-ref --verify refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}
-#         if_false: "tag does not belong to the service selected!"
 
   
-    - name: validate tag belongs to the selected service
+    - name: validate tag belongs to the selected service.          #this step will be skipped if service matches with the tag prefix or else it will fail
       if: ${{ !startsWith(steps.remove_whitespaces.outputs.TAG_NAME, github.event.inputs.service) }}
       uses: actions/github-script@v3
       with:
         script: |
             core.setFailed('tag does not belong to the service selected!')
-  
-#     - name: validate tag belongs to the selected service
-#       if: ${{ startsWith(needs.validate-tag.outputs.tag, github.event.inputs.service) }} != true
-#       uses: actions/github-script@v3
-#       with:
-#         script: |
-#             core.setFailed('tag does not belong to the service selected!')
-
-
-
-
   
     - name: validate tag exist in git repo
       run: git show-ref --verify refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}
