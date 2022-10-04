@@ -44,7 +44,7 @@ jobs:
   
     - name: validate tag belongs to the selected service
       #if: ${{ envA }} != ${{ envB }}
-      if: ${{ !startsWith(needs.validate-tag.outputs.tag, github.event.inputs.service) }}
+      if: ${{ !startsWith(steps.remove_whitespaces.outputs.TAG_NAME, github.event.inputs.service) }}
       uses: actions/github-script@v3
       with:
         script: |
