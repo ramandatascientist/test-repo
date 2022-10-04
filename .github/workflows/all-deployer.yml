@@ -58,7 +58,7 @@ jobs:
       run: |
         # check if tag belong to the selected service
         
-        if [[ "${steps.remove_whitespace.outputs.TAG_NAME}" != "${github.event.inputs.service}*" ]]; then
+        if [[ "${{steps.remove_whitespace.outputs.TAG_NAME}}" != "${{github.event.inputs.service}}*" ]]; then
           echo "::warning:: Tag does not match service"
           exit 1
         fi
