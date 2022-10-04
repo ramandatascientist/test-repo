@@ -35,7 +35,7 @@ jobs:
       id: remove_whitespaces
       run: echo "::set-output name=TAG_NAME::$(sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'<<<${{ github.event.inputs.tags }})"          
   
-    - name: print service input tag
+    - name: print service and tag inputs
       run: |
         echo "tag provided ${{github.event.inputs.service}}"
         echo "tag provided ${{steps.remove_whitespaces.outputs.TAG_NAME}}"
