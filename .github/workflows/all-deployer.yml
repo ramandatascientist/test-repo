@@ -44,6 +44,7 @@ jobs:
     - name: validate tags
       run: |
         # check if tag belong to the selected service
+        # note: git tags are case insensitive, so no need to check for case sensitivity (Eg: presentation1.0 or PRESENTATION1.0)
         
         if ${{ !startsWith(steps.remove_whitespaces.outputs.TAG_NAME, github.event.inputs.service) }}; then
           echo "::warning:: Tag '${{steps.remove_whitespaces.outputs.TAG_NAME}}' does not match service '${{github.event.inputs.service}}'"
