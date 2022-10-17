@@ -93,7 +93,7 @@ jobs:
         git pull origin main
         git fetch
         
-    - name: Deploy test
+    - name: Deploy tag
       run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
       
   adf-template-deploy:
