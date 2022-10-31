@@ -67,15 +67,3 @@ jobs:
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') 
     env:
       TAG: ${{ needs.calculate-version.outputs.tag }}
-
-    steps:
-      - name: Create tag
-        uses: actions/github-script@v6
-        with:
-          script: |
-            await github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/${{ env.TAG }}",
-              sha: context.sha
-            })
