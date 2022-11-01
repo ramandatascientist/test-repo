@@ -25,7 +25,8 @@ on:
         type: choice
         description: Select the environment where you like to deploy
         options:
-        - dev
+        - dev-cc
+        - dev-us w/e
         - test
         - production
 
