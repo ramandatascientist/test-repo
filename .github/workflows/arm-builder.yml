@@ -36,7 +36,6 @@ jobs:
       uses: actions/checkout@v2
       with:       # added this logic so it can auto-trigger semver CI job. https://github.com/EndBug/add-and-commit#the-commit-from-the-action-is-not-triggering-ci
         fetch-depth: 0
-        token: ${{ secrets.AP_DEPLOY_SECRET }}
 
     # Show paths
     - name: Show Repo paths
