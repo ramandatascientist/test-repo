@@ -90,7 +90,7 @@ jobs:
     - name: env check
       id: env-check
       run: |
-        if [ ${{ github.event.inputs.environment == 'dev-us[e/w]-pr' }} ]; then
+        if [ ${{ github.event.inputs.environment == 'dev-us[e/w]-pr' }} ]== 'true'; then
 
           echo "test=dev-us[e/w]-pr" >> $GITHUB_OUTPUT
         else
