@@ -76,11 +76,9 @@ jobs:
         git pull origin main
         git fetch
         
-    
         
     - name: Deploy tag
-      if: ${{ github.event.inputs.environment }} == dev-us[e/w]-pr
-    - run: |
+      run: |
         if ${{ github.event.inputs.environment }} == dev-us[e/w]-pr; then
           git push origin ${{needs.validate-tag.outputs.tag}}:dev-usw-pr/${{ github.event.inputs.service }} --force
         else
