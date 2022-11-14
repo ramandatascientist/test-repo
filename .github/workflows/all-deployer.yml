@@ -76,7 +76,7 @@ jobs:
         
     - name: Deploy tag
       run: |
-        if ${{ github.event.inputs.environment }} == dev-us[e/w]-pr; then
+        if ${{ github.event.inputs.environment }} == dev-us[e/w]-pr == 'true' ; then
           git push origin ${{needs.validate-tag.outputs.tag}}:dev-usw-pr/${{ github.event.inputs.service }} --force
         else
           git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
