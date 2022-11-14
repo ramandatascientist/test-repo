@@ -76,27 +76,17 @@ jobs:
         git pull origin main
         git fetch
         
-    - name: fetch branch
-      env:
-        environment: ${{ github.event.inputs.environment }}
-        service: ${{github.event.inputs.service}}
-      run: |
-        if ${{ github.event.inputs.environment }} == dev-us[e/w]-pr; then
-          echo "branch=dev-usw-pr" >> $GITHUB_ENV
-        else
-          echo "branch=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
-        fi
-        echo "branch"
-        echo branch
-        echo env.branch
-        echo $GITHUB_ENV
+    
         
     - name: Deploy tag
-      run: git push origin ${{needs.validate-tag.outputs.tag}}:env.branch/${{ github.event.inputs.service }} --force
-        
-#     - name: Deploy tag
-#       run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
-      
+      if: ${{ github.event.inputs.environment }} == dev-us[e/w]-pr
+    - run: |
+        if ${{ github.event.inputs.environment }} == dev-us[e/w]-pr; then
+          git push origin ${{needs.validate-tag.outputs.tag}}:dev-usw-pr/${{ github.event.inputs.service }} --force
+        else
+          git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+        fi
+          
       
 
   refinery-deploy:
@@ -137,16 +127,9 @@ jobs:
         
     - name: Deploy tag
       run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
-      
-#     - name: Trigger ARM Deployer
-#       # if: always()
-#       uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
-#       with:
-#         environment: ${{ github.event.inputs.environment }}
-#         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
 
       
-  adf-template-deploy:
+  collector-adf-template-deploy:
     needs: [ collector-deploy ]
     if: ${{ github.event.inputs.service == 'collector' }}
     uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
