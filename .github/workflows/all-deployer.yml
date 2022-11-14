@@ -81,7 +81,7 @@ jobs:
         environment: ${{ github.event.inputs.environment }}
         service: ${{github.event.inputs.service}}
       run: |
-        if ${environment} == 'dev-us[e/w]-pr'; then
+        if ${{ github.event.inputs.environment }} == 'dev-us[e/w]-pr'; then
           echo "branch=dev-usw-pr" >> $GITHUB_ENV
         else
           echo "branch=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
