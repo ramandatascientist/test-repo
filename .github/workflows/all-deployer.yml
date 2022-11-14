@@ -82,21 +82,26 @@ jobs:
 #         else
 #           git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
 #         fi
+#           echo "::set-output name=test::dev-us[e/w]-pr"
+#           echo "::set-output name=test::${{ github.event.inputs.environment }}"
 
  
         
     - name: env check
+      id: env-check
       run: |
         if [ ${{ github.event.inputs.environment == 'dev-us[e/w]-pr' }} ]; then
-          echo "::set-output name=test::dev-us[e/w]-pr"
+
+          echo "test::dev-us[e/w]-pr" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=test::${{ github.event.inputs.environment }}"
+          echo "test::${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
         fi
+        echo 
       shell: bash
       
     - name: Read exported variable
       run: |
-        echo "OUTPUT: ${{ steps.check.test-env.test }}"
+        echo "OUTPUT: ${{ steps.env-check.outputs.test }}"
           
       
 
