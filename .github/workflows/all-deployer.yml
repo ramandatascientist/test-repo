@@ -21,6 +21,8 @@ on:
         - production
 
 
+env:
+  branch: ${{ github.ref == 'refs/heads/master' && 'prod' || 'dev' }}
   
 jobs:
   validate-tag:
@@ -74,13 +76,22 @@ jobs:
         git pull origin main
         git fetch
         
-    - name: fetch branch # if service= datastore and branch =dev use/w then dev-use else branch
+    - name: fetch branch
+      env:
+        environment: ${{ github.event.inputs.environment }}
+        service: ${{github.event.inputs.service}}
       run: |
-        git pull origin main
-        git fetch
+        if ${environment} == 'dev-us[e/w]-pr'; then
+          echo "branch=dev-usw-pr" >> $GITHUB_ENV
+        else
+          echo "branch=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
+        fi
         
     - name: Deploy tag
-      run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+      run: git push origin ${{needs.validate-tag.outputs.tag}}:env.branch/${{ github.event.inputs.service }} --force
+        
+#     - name: Deploy tag
+#       run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
       
       
 
