@@ -92,9 +92,9 @@ jobs:
       run: |
         if [ ${{ github.event.inputs.environment == 'dev-us[e/w]-pr' }} ]; then
 
-          echo "test::dev-us[e/w]-pr" >> $GITHUB_OUTPUT
+          echo "test=dev-us[e/w]-pr" >> $GITHUB_OUTPUT
         else
-          echo "test::${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          echo "test=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
         fi
         echo 
       shell: bash
