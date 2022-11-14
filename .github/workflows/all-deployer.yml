@@ -90,20 +90,23 @@ jobs:
 
  
         
-    - name: env check
+    - name: fetch environment # to correcty identify namespace environment for each service use-pr / usw-pr
       id: env-check
       run: |
       
         if [ ${{ github.event.inputs.environment }} == 'dev-us[e/w]-pr'  ]; then
-          echo "test=dev-us[e/w]-pr" >> $GITHUB_OUTPUT
+          echo "environment=dev-usw-pr" >> $GITHUB_OUTPUT
         else
-          echo "test=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
         fi 
       shell: bash
       
-    - name: Read exported variable
-      run: |
-        echo "OUTPUT: ${{ steps.env-check.outputs.test }}"
+#     - name: Read exported variable
+#       run: |
+#         echo "OUTPUT: ${{ steps.env-check.outputs.environment }}"
+        
+    - name: Deploy tag
+      run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ steps.env-check.outputs.environment }}/${{ github.event.inputs.service }} --force
           
       
 
