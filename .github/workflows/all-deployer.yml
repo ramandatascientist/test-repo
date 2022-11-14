@@ -20,9 +20,6 @@ on:
         - test
         - production
 
-
-env:
-  branch: ${{ github.ref == 'refs/heads/master' && 'prod' || 'dev' }}
   
 jobs:
   validate-tag:
