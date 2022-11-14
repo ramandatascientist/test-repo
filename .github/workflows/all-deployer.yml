@@ -57,9 +57,11 @@ jobs:
         git show-ref --verify "refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}"
         
 
-  deploy-tag:
+
+  datastore-deploy:
     runs-on: ubuntu-latest
     needs: [ validate-tag ]
+    if: ${{ github.event.inputs.service == 'datastore' }}
     
     steps:
     - uses: actions/checkout@v2
@@ -75,12 +77,61 @@ jobs:
     - name: Deploy tag
       run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
       
-  adf-template-deploy:
-    needs: [ deploy-tag ]
+      
+
+  refinery-deploy:
+    runs-on: ubuntu-latest
+    needs: [ validate-tag ]
+    if: ${{ github.event.inputs.service == 'refinery' }}
+    
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.TEST_SECRET }}
+        
+    - name: pull and fetch
+      run: |
+        git pull origin main
+        git fetch
+        
+    - name: Deploy tag
+      run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+
+
+  collector-deploy:
+    runs-on: ubuntu-latest
+    needs: [ validate-tag ]
     if: ${{ github.event.inputs.service == 'collector' }}
-    uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
-    with:
-      environment: ${{ github.event.inputs.environment }}
-      branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+    
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.TEST_SECRET }}
+        
+    - name: pull and fetch
+      run: |
+        git pull origin main
+        git fetch
+        
+    - name: Deploy tag
+      run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+      
+    - name: Deploy tag
+      needs: [ deploy-tag ]
+      uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
+      with:
+        environment: ${{ github.event.inputs.environment }}
+        branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+
+      
+#   adf-template-deploy:
+#     needs: [ deploy-tag ]
+#     if: ${{ github.event.inputs.service == 'collector' }}
+#     uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
+#     with:
+#       environment: ${{ github.event.inputs.environment }}
+#       branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         
         
