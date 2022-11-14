@@ -127,12 +127,13 @@ jobs:
         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
 
       
-#   adf-template-deploy:
-#     needs: [ deploy-tag ]
-#     if: ${{ github.event.inputs.service == 'collector' }}
-#     uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
-#     with:
-#       environment: ${{ github.event.inputs.environment }}
-#       branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+  adf-template-deploy:
+    needs: [ collector-deploy ]
+    if: ${{ github.event.inputs.service == 'collector' }}
+    uses: ./.github/workflows/collector-adf-arm-deployer-v1.yml
+    with:
+      environment: ${{ github.event.inputs.environment }}
+      branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+    secrets: inherit
         
         
