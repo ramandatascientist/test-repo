@@ -85,18 +85,19 @@ jobs:
 #           echo "::set-output name=test::dev-us[e/w]-pr"
 #           echo "::set-output name=test::${{ github.event.inputs.environment }}"
 
+#    if [ ${{ github.event.inputs.environment == 'dev-us[e/w]-pr' }} ]== 'true'; then
+
  
         
     - name: env check
       id: env-check
       run: |
-        if [ ${{ github.event.inputs.environment == 'dev-us[e/w]-pr' }} ]== 'true'; then
-
+      
+        if [ ${{ github.event.inputs.environment = 'dev-us[e/w]-pr' }} ]; then
           echo "test=dev-us[e/w]-pr" >> $GITHUB_OUTPUT
         else
           echo "test=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
-        fi
-        echo 
+        fi 
       shell: bash
       
     - name: Read exported variable
