@@ -74,27 +74,29 @@ jobs:
         git fetch
         
         
-    - name: Deploy tag
-      shell: bash
-      run: |
-        if ${{ github.event.inputs.environment }} == dev-us[e/w]-pr == 'true' ; then
-          git push origin ${{needs.validate-tag.outputs.tag}}:dev-usw-pr/${{ github.event.inputs.service }} --force
-        else
-          git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
-        fi
-        
-#     - name: env check
-#       run: |
-#         if [ ${{ github.ref }} != 'refs/heads/main' ]; then
-#           echo "::set-output name=test::abc"
-#         else
-#           echo "::set-output name=test::123"
-#         fi
+#     - name: Deploy tag
 #       shell: bash
-      
-#     - name: Read exported variable
 #       run: |
-#         echo "OUTPUT: ${{ steps.check.test-env.test }}"
+#         if ${{ github.event.inputs.environment }} == dev-us[e/w]-pr == 'true' ; then
+#           git push origin ${{needs.validate-tag.outputs.tag}}:dev-usw-pr/${{ github.event.inputs.service }} --force
+#         else
+#           git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+#         fi
+
+ 
+        
+    - name: env check
+      run: |
+        if [ ${{ github.event.inputs.environment == 'dev-us[e/w]-pr' }} ]; then
+          echo "::set-output name=test::dev-us[e/w]-pr"
+        else
+          echo "::set-output name=test::${{ github.event.inputs.environment }}"
+        fi
+      shell: bash
+      
+    - name: Read exported variable
+      run: |
+        echo "OUTPUT: ${{ steps.check.test-env.test }}"
           
       
 
