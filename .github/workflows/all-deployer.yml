@@ -15,10 +15,11 @@ on:
         type: choice
         description: Select the environment where you like to deploy
         options:
-        - dev-cc
-        - dev-us w/e
+        - dev
+        - dev-us[e/w]-pr
         - test
         - production
+
 
   
 jobs:
@@ -56,30 +57,6 @@ jobs:
         git show-ref --verify "refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}"
         
 
-#     - name: validate tags
-#       run: |
-#         # check if tag belong to the selected service
-        
-#         if [[ "${{steps.remove_whitespace.outputs.TAG_NAME}}" != "${{github.event.inputs.service}}*" ]]; then
-#           echo "::warning:: Tag does not match service"
-#           exit 1
-#         fi
-        
-#         # test that tag exists
-#         git show-ref --verify "refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}"
-        
-        
-        
-  #     - name: validate tag belongs to the selected service.          #this step will be skipped if service matches with the tag prefix or else it will fail
-#       if: ${{ !startsWith(steps.remove_whitespaces.outputs.TAG_NAME, github.event.inputs.service) }}
-#       uses: actions/github-script@v3
-#       with:
-#         script: |
-#             core.setFailed('tag does not belong to the service selected!')
-  
-#     - name: validate tag exist in git repo
-#       run: git show-ref --verify refs/tags/${{steps.remove_whitespaces.outputs.TAG_NAME}}  
-       
   deploy-tag:
     runs-on: ubuntu-latest
     needs: [ validate-tag ]
@@ -105,23 +82,5 @@ jobs:
     with:
       environment: ${{ github.event.inputs.environment }}
       branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
-      
-#   deploy-adf:
-#     runs-on: ubuntu-latest
-#     needs: [ validate-tag ]
-#     if: ${{ github.event.inputs.service == 'collector' }}
-    
-#     steps:
-#     - uses: actions/checkout@v3
-#       with:
-#         ref: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
-#         fetch-depth: 0
-#         token: ${{ secrets.TEST_SECRET }}
-        
-#     - name: pull and fetch
-#       uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
-#       with:
-#         environment: ${{ github.event.inputs.environment }}
-#         branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
         
         
