@@ -74,6 +74,11 @@ jobs:
         git pull origin main
         git fetch
         
+    - name: fetch branch # if service= datastore and branch =dev use/w then dev-use else branch
+      run: |
+        git pull origin main
+        git fetch
+        
     - name: Deploy tag
       run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
       
