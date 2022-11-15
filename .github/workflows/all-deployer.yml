@@ -74,22 +74,6 @@ jobs:
         git fetch
         
         
-#     - name: Deploy tag
-#       shell: bash
-#       run: |
-#         if ${{ github.event.inputs.environment }} == dev-us[e/w]-pr == 'true' ; then
-#           git push origin ${{needs.validate-tag.outputs.tag}}:dev-usw-pr/${{ github.event.inputs.service }} --force
-#         else
-#           git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
-#         fi
-#           echo "::set-output name=test::dev-us[e/w]-pr"
-#           echo "::set-output name=test::${{ github.event.inputs.environment }}"
-
-#    if [ ${{ github.event.inputs.environment == 'dev-us[e/w]-pr' }} ]== 'true'; then
-# [ ${{ github.event.inputs.environment == 'dev-us[e/w]-pr' }} ]
-
- 
-        
     - name: fetch environment # to correcty identify namespace environment for each service use-pr / usw-pr
       id: env-check
       run: |
@@ -101,10 +85,7 @@ jobs:
         fi 
       shell: bash
       
-#     - name: Read exported variable
-#       run: |
-#         echo "OUTPUT: ${{ steps.env-check.outputs.environment }}"
-        
+
     - name: Deploy tag
       run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ steps.env-check.outputs.environment }}/${{ github.event.inputs.service }} --force
           
@@ -126,8 +107,20 @@ jobs:
         git pull origin main
         git fetch
         
+    - name: fetch environment # to correcty identify namespace environment for each service use-pr / usw-pr
+      id: env-check
+      run: |
+      
+        if [ ${{ github.event.inputs.environment }} == 'dev-us[e/w]-pr'  ]; then
+          echo "environment=dev-usw-pr" >> $GITHUB_OUTPUT
+        else
+          echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+        fi 
+      shell: bash
+      
+
     - name: Deploy tag
-      run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+      run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ steps.env-check.outputs.environment }}/${{ github.event.inputs.service }} --force
 
 
   collector-deploy:
@@ -146,8 +139,20 @@ jobs:
         git pull origin main
         git fetch
         
+    - name: fetch environment # to correcty identify namespace environment for each service use-pr / usw-pr
+      id: env-check
+      run: |
+      
+        if [ ${{ github.event.inputs.environment }} == 'dev-us[e/w]-pr'  ]; then
+          echo "environment=dev-use-pr" >> $GITHUB_OUTPUT
+        else
+          echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+        fi 
+      shell: bash
+      
+
     - name: Deploy tag
-      run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ github.event.inputs.environment }}/${{ github.event.inputs.service }} --force
+      run: git push origin ${{needs.validate-tag.outputs.tag}}:${{ steps.env-check.outputs.environment }}/${{ github.event.inputs.service }} --force
 
       
   collector-adf-template-deploy:
@@ -155,7 +160,8 @@ jobs:
     if: ${{ github.event.inputs.service == 'collector' }}
     uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
     with:
-      environment: ${{ github.event.inputs.environment }}
+      #environment: ${{ github.event.inputs.environment }}
+      environment: ${{ steps.env-check.outputs.environment }}
       branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
     secrets: inherit
         
