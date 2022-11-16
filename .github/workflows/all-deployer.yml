@@ -164,7 +164,7 @@ jobs:
     with:
       #environment: ${{ github.event.inputs.environment }}
       environment: ${{ needs.collector-deploy.outputs.environment }}
-      branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
+      branch_name: ${{ needs.collector-deploy.outputs.environment }}/${{ github.event.inputs.service }}
     secrets: inherit
         
         
