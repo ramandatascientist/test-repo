@@ -126,6 +126,8 @@ jobs:
   collector-deploy:
     runs-on: ubuntu-latest
     needs: [ validate-tag ]
+    outputs:
+      environment: ${{steps.env-check.outputs.environment}}
     if: ${{ github.event.inputs.service == 'collector' }}
     
     steps:
@@ -161,7 +163,7 @@ jobs:
     uses: ramandatascientist/test-repo/.github/workflows/build-job.yml@main
     with:
       #environment: ${{ github.event.inputs.environment }}
-      environment: ${{ steps.env-check.outputs.environment }}
+      environment: ${{ needs.collector-deploy.outputs.environment }}
       branch_name: ${{ github.event.inputs.environment }}/${{ github.event.inputs.service }}
     secrets: inherit
         
